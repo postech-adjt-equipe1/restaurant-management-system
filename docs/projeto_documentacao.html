@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Documentação Técnica — Tech Challenge Fase 1</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      font-size: 13px;
+      color: #1a1a2e;
+      background: #fff;
+      line-height: 1.7;
+    }
+
+    /* ── CAPA ── */
+    .cover {
+      page-break-after: always;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #0f3460 0%, #16213e 50%, #1a1a2e 100%);
+      color: #fff;
+      text-align: center;
+      padding: 60px;
+    }
+    .cover .badge {
+      background: #e94560;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 6px 18px;
+      border-radius: 20px;
+      margin-bottom: 32px;
+    }
+    .cover h1 {
+      font-size: 38px;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    .cover h1 span { color: #e94560; }
+    .cover .subtitle {
+      font-size: 16px;
+      color: #a0aec0;
+      margin-bottom: 48px;
+    }
+    .cover .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      width: 100%;
+      max-width: 700px;
+    }
+    .cover .meta-card {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px;
+      padding: 16px;
+    }
+    .cover .meta-card .label {
+      font-size: 10px;
+      color: #a0aec0;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+    .cover .meta-card .value {
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .cover .footer-note {
+      margin-top: 48px;
+      font-size: 11px;
+      color: #4a5568;
+    }
+
+    /* ── LAYOUT ── */
+    .page { padding: 52px 60px; max-width: 900px; margin: 0 auto; }
+
+    /* ── CABEÇALHO DE SEÇÃO ── */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+      padding-bottom: 14px;
+      border-bottom: 2px solid #e2e8f0;
+    }
+    .section-number {
+      background: #0f3460;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .section-title { font-size: 22px; font-weight: 700; color: #0f3460; }
+
+    /* ── TOC ── */
+    .toc { page-break-after: always; }
+    .toc-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px dashed #e2e8f0;
+    }
+    .toc-item .toc-label { font-size: 14px; font-weight: 500; }
+    .toc-item .toc-sub { font-size: 12px; color: #718096; margin-top: 2px; }
+    .toc-item .toc-page { font-size: 12px; color: #a0aec0; font-weight: 600; }
+
+    /* ── BLOCOS ── */
+    .card {
+      background: #f7fafc;
+      border: 1px solid #e2e8f0;
+      border-left: 4px solid #0f3460;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin-bottom: 20px;
+    }
+    .card-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #0f3460;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-title .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #e94560;
+    }
+
+    /* ── CÓDIGO ── */
+    pre, code {
+      font-family: 'Fira Code', 'Consolas', 'Courier New', monospace;
+    }
+    .code-block {
+      background: #1a202c;
+      color: #e2e8f0;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 16px 0;
+      overflow-x: auto;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    .code-block .kw  { color: #f6ad55; }  /* keyword */
+    .code-block .an  { color: #68d391; }  /* annotation */
+    .code-block .ty  { color: #76e4f7; }  /* type */
+    .code-block .st  { color: #fc8181; }  /* string */
+    .code-block .cm  { color: #718096; font-style: italic; }  /* comment */
+    .code-block .fi  { color: #b794f4; }  /* field */
+    .code-block .nu  { color: #f6e05e; }  /* number */
+    .code-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #a0aec0;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    /* ── TABELA ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 12.5px;
+    }
+    thead tr { background: #0f3460; color: #fff; }
+    thead th { padding: 10px 14px; text-align: left; font-weight: 600; }
+    tbody tr:nth-child(even) { background: #f7fafc; }
+    tbody td { padding: 9px 14px; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
+    td code { background: #edf2f7; padding: 1px 5px; border-radius: 3px; font-size: 11px; }
+
+    /* ── DIAGRAMA ── */
+    .arch-diagram {
+      background: #1a202c;
+      border-radius: 10px;
+      padding: 28px 32px;
+      margin: 20px 0;
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+      color: #e2e8f0;
+      line-height: 2;
+    }
+    .arch-diagram .layer {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 16px;
+      border-radius: 6px;
+      margin: 4px 0;
+    }
+    .layer-http   { background: rgba(233,69,96,0.15);  border-left: 3px solid #e94560; }
+    .layer-ctrl   { background: rgba(118,228,247,0.1); border-left: 3px solid #76e4f7; }
+    .layer-svc    { background: rgba(104,211,145,0.1); border-left: 3px solid #68d391; }
+    .layer-repo   { background: rgba(246,173,85,0.1);  border-left: 3px solid #f6ad55; }
+    .layer-model  { background: rgba(183,148,244,0.1); border-left: 3px solid #b794f4; }
+    .layer-db     { background: rgba(255,255,255,0.05);border-left: 3px solid #4a5568; }
+    .layer-label  { font-weight: 700; min-width: 110px; font-size: 11px; letter-spacing: 0.5px; }
+    .layer-desc   { color: #a0aec0; font-size: 11px; }
+    .arrow { text-align: center; color: #4a5568; font-size: 16px; padding: 2px 0; }
+
+    /* ── BADGE / TAG ── */
+    .tag {
+      display: inline-block;
+      background: #ebf4ff;
+      color: #2b6cb0;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin: 2px 3px 2px 0;
+    }
+    .tag.red   { background: #fff5f5; color: #c53030; }
+    .tag.green { background: #f0fff4; color: #276749; }
+    .tag.gray  { background: #f7fafc; color: #4a5568; }
+    .tag.purple{ background: #faf5ff; color: #553c9a; }
+
+    /* ── AVISO ── */
+    .alert {
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin: 16px 0;
+      font-size: 12.5px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .alert-warn { background: #fffbeb; border-left: 4px solid #f6ad55; }
+    .alert-info { background: #ebf8ff; border-left: 4px solid #4299e1; }
+    .alert-ok   { background: #f0fff4; border-left: 4px solid #48bb78; }
+    .alert-icon { font-size: 16px; line-height: 1; flex-shrink: 0; }
+
+    /* ── PAGE BREAK ── */
+    .pb { page-break-before: always; }
+
+    /* ── UTILITIES ── */
+    p  { margin-bottom: 12px; }
+    h3 { font-size: 15px; font-weight: 700; color: #2d3748; margin: 24px 0 10px; }
+    h4 { font-size: 13px; font-weight: 700; color: #4a5568; margin: 18px 0 8px; }
+    ul { padding-left: 20px; margin-bottom: 12px; }
+    ul li { margin-bottom: 5px; }
+    .mono { font-family: 'Fira Code', monospace; font-size: 11px; background: #edf2f7; padding: 1px 5px; border-radius: 3px; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+    .spacer { height: 24px; }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════
+     CAPA
+════════════════════════════════════════════════ -->
+<div class="cover">
+  <div class="badge">POSTECH FIAP — Arquitetura e Desenvolvimento Java</div>
+  <h1>Tech Challenge <span>Fase 1</span></h1>
+  <div class="subtitle">Documentação Técnica do Projeto — Restaurante Gestão de Usuários</div>
+
+  <div class="meta-grid">
+    <div class="meta-card">
+      <div class="label">Framework</div>
+      <div class="value">Spring Boot 3.2.5</div>
+    </div>
+    <div class="meta-card">
+      <div class="label">Linguagem</div>
+      <div class="value">Java 17</div>
+    </div>
+    <div class="meta-card">
+      <div class="label">Banco de Dados</div>
+      <div class="value">PostgreSQL 16</div>
+    </div>
+    <div class="meta-card">
+      <div class="label">Migrations</div>
+      <div class="value">Flyway</div>
+    </div>
+    <div class="meta-card">
+      <div class="label">Containerização</div>
+      <div class="value">Docker + Compose</div>
+    </div>
+    <div class="meta-card">
+      <div class="label">Documentação API</div>
+      <div class="value">Swagger / OpenAPI 3</div>
+    </div>
+  </div>
+
+  <div class="footer-note">Gerado automaticamente • Abril 2026</div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     SUMÁRIO
+════════════════════════════════════════════════ -->
+<div class="page toc">
+  <div class="section-header">
+    <div class="section-title">Sumário</div>
+  </div>
+
+  <div class="toc-item">
+    <div>
+      <div class="toc-label">1. Visão Geral do Projeto</div>
+      <div class="toc-sub">Objetivo, tecnologias e entregáveis</div>
+    </div>
+    <div class="toc-page">3</div>
+  </div>
+  <div class="toc-item">
+    <div>
+      <div class="toc-label">2. Arquitetura em Camadas</div>
+      <div class="toc-sub">Diagrama, responsabilidades e fluxo de dados</div>
+    </div>
+    <div class="toc-page">4</div>
+  </div>
+  <div class="toc-item">
+    <div>
+      <div class="toc-label">3. Camada de Domínio — Model</div>
+      <div class="toc-sub">Entidades JPA, Address embeddable, UserType enum</div>
+    </div>
+    <div class="toc-page">5</div>
+  </div>
+  <div class="toc-item">
+    <div>
+      <div class="toc-label">4. Repositório — UserRepository</div>
+      <div class="toc-sub">Spring Data JPA, queries derivadas</div>
+    </div>
+    <div class="toc-page">7</div>
+  </div>
+  <div class="toc-item">
+    <div>
+      <div class="toc-label">5. Migrations com Flyway</div>
+      <div class="toc-sub">Estratégia de versionamento e script SQL</div>
+    </div>
+    <div class="toc-page">8</div>
+  </div>
+  <div class="toc-item">
+    <div>
+      <div class="toc-label">6. Configurações da Aplicação</div>
+      <div class="toc-sub">application.yml, perfil de teste, variáveis de ambiente</div>
+    </div>
+    <div class="toc-page">9</div>
+  </div>
+  <div class="toc-item">
+    <div>
+      <div class="toc-label">7. Segurança — SecurityConfig</div>
+      <div class="toc-sub">BCryptPasswordEncoder, filtro HTTP</div>
+    </div>
+    <div class="toc-page">10</div>
+  </div>
+  <div class="toc-item">
+    <div>
+      <div class="toc-label">8. Swagger / OpenAPI</div>
+      <div class="toc-sub">OpenApiConfig e endpoint de documentação</div>
+    </div>
+    <div class="toc-page">11</div>
+  </div>
+  <div class="toc-item">
+    <div>
+      <div class="toc-label">9. Infraestrutura Docker</div>
+      <div class="toc-sub">Dockerfile multi-stage e docker-compose.yml</div>
+    </div>
+    <div class="toc-page">12</div>
+  </div>
+  <div class="toc-item">
+    <div>
+      <div class="toc-label">10. Dependências (pom.xml)</div>
+      <div class="toc-sub">Detalhamento de cada dependência Maven</div>
+    </div>
+    <div class="toc-page">13</div>
+  </div>
+  <div class="toc-item">
+    <div>
+      <div class="toc-label">11. O que falta implementar</div>
+      <div class="toc-sub">Pendências identificadas para completar o projeto</div>
+    </div>
+    <div class="toc-page">14</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     1. VISÃO GERAL
+════════════════════════════════════════════════ -->
+<div class="page pb">
+  <div class="section-header">
+    <div class="section-number">1</div>
+    <div class="section-title">Visão Geral do Projeto</div>
+  </div>
+
+  <p>
+    O projeto é um <strong>backend REST em Spring Boot</strong> para gestão de usuários de um sistema de restaurantes, desenvolvido como entregável do Tech Challenge Fase 1 da POSTECH FIAP.
+    O sistema suporta dois tipos de usuário — <strong>Dono de Restaurante (OWNER)</strong> e <strong>Cliente (CUSTOMER)</strong> — e expõe operações de CRUD, troca de senha e validação de login.
+  </p>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title"><div class="dot"></div>Objetivo</div>
+      <ul>
+        <li>Cadastrar e gerenciar usuários (CRUD completo)</li>
+        <li>Troca de senha com validação BCrypt</li>
+        <li>Validação de login (autenticação simples)</li>
+        <li>API documentada via Swagger/OpenAPI 3</li>
+        <li>Ambiente 100% containerizado com Docker</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="dot"></div>Entregáveis</div>
+      <ul>
+        <li>Código-fonte no GitHub</li>
+        <li>Docker Compose funcional</li>
+        <li>Collection Postman (pendente)</li>
+        <li>Documentação Swagger em <span class="mono">/swagger-ui.html</span></li>
+        <li>README detalhado</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Stack de Tecnologias</h3>
+  <table>
+    <thead>
+      <tr><th>Categoria</th><th>Tecnologia</th><th>Versão</th><th>Finalidade</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Framework</td><td>Spring Boot</td><td>3.2.5</td><td>Base da aplicação REST</td></tr>
+      <tr><td>Linguagem</td><td>Java</td><td>17 (LTS)</td><td>Linguagem principal</td></tr>
+      <tr><td>Persistência</td><td>Spring Data JPA / Hibernate</td><td>—</td><td>Mapeamento objeto-relacional</td></tr>
+      <tr><td>Banco (prod)</td><td>PostgreSQL</td><td>16</td><td>Banco relacional de produção</td></tr>
+      <tr><td>Banco (teste)</td><td>H2</td><td>—</td><td>Banco in-memory para testes</td></tr>
+      <tr><td>Migrations</td><td>Flyway</td><td>—</td><td>Controle de versão do schema SQL</td></tr>
+      <tr><td>Segurança</td><td>Spring Security</td><td>—</td><td>BCryptPasswordEncoder</td></tr>
+      <tr><td>Docs API</td><td>Springdoc OpenAPI</td><td>2.5.0</td><td>Swagger UI automático</td></tr>
+      <tr><td>Boilerplate</td><td>Lombok</td><td>—</td><td>Redução de código repetitivo</td></tr>
+      <tr><td>Container</td><td>Docker + Compose</td><td>—</td><td>Empacotamento e orquestração</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     2. ARQUITETURA
+════════════════════════════════════════════════ -->
+<div class="page pb">
+  <div class="section-header">
+    <div class="section-number">2</div>
+    <div class="section-title">Arquitetura em Camadas</div>
+  </div>
+
+  <p>
+    A aplicação segue o padrão <strong>arquitetura em camadas (Layered Architecture)</strong>, onde cada camada tem uma responsabilidade única e bem definida.
+    A comunicação entre camadas é sempre de cima para baixo — a camada superior depende da inferior, nunca o contrário.
+  </p>
+
+  <div class="arch-diagram">
+    <div class="layer layer-http">
+      <div class="layer-label" style="color:#e94560;">HTTP Client</div>
+      <div class="layer-desc">Postman / Browser / Frontend — faz requisições HTTP (GET, POST, PUT, DELETE, PATCH)</div>
+    </div>
+    <div class="arrow">↓ JSON sobre HTTP ↓</div>
+    <div class="layer layer-ctrl">
+      <div class="layer-label" style="color:#76e4f7;">Controller</div>
+      <div class="layer-desc">Recebe requisições, valida @Valid nos DTOs, delega para o Service, retorna ResponseEntity</div>
+    </div>
+    <div class="arrow">↓ chama ↓</div>
+    <div class="layer layer-svc">
+      <div class="layer-label" style="color:#68d391;">Service</div>
+      <div class="layer-desc">Contém toda a lógica de negócio: unicidade, BCrypt, regras de atualização, exceções customizadas</div>
+    </div>
+    <div class="arrow">↓ chama ↓</div>
+    <div class="layer layer-repo">
+      <div class="layer-label" style="color:#f6ad55;">Repository</div>
+      <div class="layer-desc">Interface Spring Data JPA — abstrai acesso ao banco. Queries derivadas por nome de método</div>
+    </div>
+    <div class="arrow">↓ SQL gerado pelo Hibernate ↓</div>
+    <div class="layer layer-model">
+      <div class="layer-label" style="color:#b794f4;">Model (Entity)</div>
+      <div class="layer-desc">Entidades JPA mapeadas para tabelas SQL. User @Entity + Address @Embeddable</div>
+    </div>
+    <div class="arrow">↓ JDBC ↓</div>
+    <div class="layer layer-db">
+      <div class="layer-label" style="color:#718096;">PostgreSQL</div>
+      <div class="layer-desc">Banco de dados relacional — schema criado e versionado pelo Flyway</div>
+    </div>
+  </div>
+
+  <h3>Estrutura de Pacotes</h3>
+  <div class="code-block">
+<span class="cm">br.com.fiap.restaurante</span>
+├── <span class="an">config</span>/          <span class="cm">← SecurityConfig, OpenApiConfig</span>
+├── <span class="an">controller</span>/      <span class="cm">← UserController (a implementar)</span>
+├── <span class="an">dto</span>/             <span class="cm">← Request / Response DTOs (a implementar)</span>
+├── <span class="an">exception</span>/       <span class="cm">← Exceções customizadas + GlobalExceptionHandler (a implementar)</span>
+├── <span class="an">model</span>/           <span class="cm">← User.java, Address.java, UserType.java ✔</span>
+├── <span class="an">repository</span>/      <span class="cm">← UserRepository.java ✔</span>
+└── <span class="an">service</span>/         <span class="cm">← UserService (a implementar)</span>
+  </div>
+
+  <h3>Papel de cada camada</h3>
+  <table>
+    <thead><tr><th>Pacote</th><th>Responsabilidade</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td><code>config</code></td><td>Beans de configuração global (Security, OpenAPI)</td><td><span class="tag green">Implementado</span></td></tr>
+      <tr><td><code>model</code></td><td>Entidades JPA, enums e value objects</td><td><span class="tag green">Implementado</span></td></tr>
+      <tr><td><code>repository</code></td><td>Acesso ao banco via Spring Data JPA</td><td><span class="tag green">Implementado</span></td></tr>
+      <tr><td><code>service</code></td><td>Regras de negócio, orquestração, BCrypt</td><td><span class="tag red">Pendente</span></td></tr>
+      <tr><td><code>dto</code></td><td>Objetos de entrada/saída da API (request/response)</td><td><span class="tag red">Pendente</span></td></tr>
+      <tr><td><code>controller</code></td><td>Endpoints REST, mapeamento de rotas, @Valid</td><td><span class="tag red">Pendente</span></td></tr>
+      <tr><td><code>exception</code></td><td>Exceções customizadas + handler global HTTP</td><td><span class="tag red">Pendente</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     3. MODEL
+════════════════════════════════════════════════ -->
+<div class="page pb">
+  <div class="section-header">
+    <div class="section-number">3</div>
+    <div class="section-title">Camada de Domínio — Model</div>
+  </div>
+
+  <!-- User -->
+  <h3>3.1 Entidade User</h3>
+  <p>
+    A entidade <span class="mono">User</span> é o coração do domínio. Ela representa um usuário do sistema e é mapeada diretamente para a tabela <span class="mono">users</span> no banco de dados.
+  </p>
+
+  <div class="code-label">src/main/java/br/com/fiap/restaurante/model/User.java</div>
+  <div class="code-block">
+<span class="an">@Entity</span>
+<span class="an">@Table</span>(name = <span class="st">"users"</span>)
+<span class="an">@Getter</span>
+<span class="an">@Setter</span>
+<span class="an">@NoArgsConstructor</span>
+<span class="an">@AllArgsConstructor</span>
+<span class="an">@Builder</span>
+<span class="kw">public class</span> <span class="ty">User</span> {
+
+    <span class="an">@Id</span>
+    <span class="an">@GeneratedValue</span>(strategy = GenerationType.IDENTITY)
+    <span class="kw">private</span> <span class="ty">Long</span> <span class="fi">id</span>;
+
+    <span class="an">@NotBlank</span>
+    <span class="an">@Size</span>(max = <span class="nu">100</span>)
+    <span class="kw">private</span> <span class="ty">String</span> <span class="fi">nome</span>;
+
+    <span class="an">@NotBlank</span>
+    <span class="an">@Email</span>
+    <span class="an">@Size</span>(max = <span class="nu">150</span>)
+    <span class="an">@Column</span>(unique = <span class="kw">true</span>, nullable = <span class="kw">false</span>)
+    <span class="kw">private</span> <span class="ty">String</span> <span class="fi">email</span>;
+
+    <span class="an">@NotBlank</span>
+    <span class="an">@Size</span>(min = <span class="nu">3</span>, max = <span class="nu">50</span>)
+    <span class="an">@Column</span>(unique = <span class="kw">true</span>, nullable = <span class="kw">false</span>)
+    <span class="kw">private</span> <span class="ty">String</span> <span class="fi">login</span>;
+
+    <span class="an">@NotBlank</span>
+    <span class="kw">private</span> <span class="ty">String</span> <span class="fi">senha</span>;    <span class="cm">// sempre armazenada como hash BCrypt</span>
+
+    <span class="an">@Column</span>(nullable = <span class="kw">false</span>)
+    <span class="kw">private</span> <span class="ty">LocalDateTime</span> <span class="fi">dataUltimaAlteracao</span>;
+
+    <span class="an">@NotNull</span>
+    <span class="an">@Enumerated</span>(EnumType.STRING)
+    <span class="an">@Column</span>(nullable = <span class="kw">false</span>)
+    <span class="kw">private</span> <span class="ty">UserType</span> <span class="fi">tipo</span>;
+
+    <span class="an">@NotNull</span>
+    <span class="an">@Valid</span>
+    <span class="an">@Embedded</span>
+    <span class="kw">private</span> <span class="ty">Address</span> <span class="fi">endereco</span>;
+
+    <span class="an">@PrePersist</span>
+    <span class="kw">public void</span> <span class="fi">prePersist</span>() {
+        dataUltimaAlteracao = LocalDateTime.now();
+    }
+
+    <span class="an">@PreUpdate</span>
+    <span class="kw">public void</span> <span class="fi">preUpdate</span>() {
+        dataUltimaAlteracao = LocalDateTime.now();
+    }
+}
+  </div>
+
+  <h4>Explicação das anotações usadas em User</h4>
+  <table>
+    <thead><tr><th>Anotação</th><th>Camada</th><th>O que faz</th></tr></thead>
+    <tbody>
+      <tr><td><code>@Entity</code></td><td>JPA</td><td>Marca a classe como entidade gerenciada pelo Hibernate</td></tr>
+      <tr><td><code>@Table(name="users")</code></td><td>JPA</td><td>Define o nome exato da tabela no banco (sem essa anotação usaria "user", palavra reservada em SQL)</td></tr>
+      <tr><td><code>@Id</code></td><td>JPA</td><td>Define o campo como chave primária</td></tr>
+      <tr><td><code>@GeneratedValue(IDENTITY)</code></td><td>JPA</td><td>Delega a geração do ID para o banco (BIGSERIAL/auto-increment)</td></tr>
+      <tr><td><code>@Column(unique, nullable)</code></td><td>JPA</td><td>Refina o mapeamento da coluna: unicidade e NOT NULL no DDL</td></tr>
+      <tr><td><code>@Enumerated(STRING)</code></td><td>JPA</td><td>Persiste o enum como texto ("OWNER"/"CUSTOMER") em vez de número ordinal</td></tr>
+      <tr><td><code>@Embedded</code></td><td>JPA</td><td>Instrui o Hibernate a incorporar os campos de Address na mesma tabela</td></tr>
+      <tr><td><code>@Valid</code></td><td>Bean Validation</td><td>Cascateia a validação para dentro do objeto Address embutido</td></tr>
+      <tr><td><code>@PrePersist / @PreUpdate</code></td><td>JPA Lifecycle</td><td>Callbacks executados antes de INSERT e UPDATE — atualiza dataUltimaAlteracao automaticamente</td></tr>
+      <tr><td><code>@NotBlank</code></td><td>Bean Validation</td><td>Campo não pode ser null, vazio ou só espaços</td></tr>
+      <tr><td><code>@Email</code></td><td>Bean Validation</td><td>Valida formato de e-mail</td></tr>
+      <tr><td><code>@Size(min, max)</code></td><td>Bean Validation</td><td>Controla tamanho mínimo e máximo da String</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- address + userttype -->
+<div class="page pb">
+  <div class="section-header">
+    <div class="section-number">3</div>
+    <div class="section-title">Camada de Domínio — Model (cont.)</div>
+  </div>
+
+  <!-- Address -->
+  <h3>3.2 Value Object Address (@Embeddable)</h3>
+  <p>
+    <span class="mono">Address</span> não é uma entidade independente — é um <strong>value object</strong> embutido dentro de <span class="mono">User</span>.
+    Isso significa que não possui tabela própria: seus campos são colunas da tabela <span class="mono">users</span>.
+  </p>
+
+  <div class="alert alert-info">
+    <div class="alert-icon">💡</div>
+    <div>
+      <strong>@Embeddable vs @Entity:</strong> Uma entidade tem identidade própria (id) e tabela própria.
+      Um embeddable não tem id — ele vive dentro de outra entidade. É ideal para dados que não fazem sentido isolados, como endereços.
+    </div>
+  </div>
+
+  <div class="code-label">src/main/java/br/com/fiap/restaurante/model/Address.java</div>
+  <div class="code-block">
+<span class="an">@Embeddable</span>
+<span class="an">@Builder</span>
+<span class="an">@NoArgsConstructor</span>
+<span class="an">@AllArgsConstructor</span>
+<span class="kw">public class</span> <span class="ty">Address</span> {
+
+    <span class="an">@NotBlank</span>
+    <span class="kw">private</span> <span class="ty">String</span> <span class="fi">logradouro</span>;
+
+    <span class="an">@NotBlank</span>
+    <span class="kw">private</span> <span class="ty">String</span> <span class="fi">numero</span>;
+
+    <span class="kw">private</span> <span class="ty">String</span> <span class="fi">complemento</span>;    <span class="cm">// nullable — campo opcional</span>
+
+    <span class="an">@NotBlank</span>
+    <span class="kw">private</span> <span class="ty">String</span> <span class="fi">bairro</span>;
+
+    <span class="an">@NotBlank</span>
+    <span class="kw">private</span> <span class="ty">String</span> <span class="fi">cidade</span>;
+
+    <span class="an">@NotBlank</span>
+    <span class="kw">private</span> <span class="ty">String</span> <span class="fi">estado</span>;
+
+    <span class="an">@NotBlank</span>
+    <span class="an">@Size</span>(max = <span class="nu">9</span>)
+    <span class="an">@Pattern</span>(regexp = <span class="st">"\\d{5}-?\\d{3}"</span>)    <span class="cm">// aceita "12345-678" ou "12345678"</span>
+    <span class="kw">private</span> <span class="ty">String</span> <span class="fi">cep</span>;
+}
+  </div>
+
+  <h4>Como os campos de Address ficam no banco</h4>
+  <div class="alert alert-ok">
+    <div class="alert-icon">✅</div>
+    <div>
+      Como Address é <code>@Embeddable</code>, o Hibernate mapeia cada campo diretamente como coluna de <code>users</code>.
+      Não há JOIN — todos os dados de um usuário ficam em uma única linha da tabela.
+    </div>
+  </div>
+  <table>
+    <thead><tr><th>Campo em Address</th><th>Coluna na tabela users</th><th>Nullable?</th></tr></thead>
+    <tbody>
+      <tr><td><code>logradouro</code></td><td><code>logradouro</code></td><td>Não</td></tr>
+      <tr><td><code>numero</code></td><td><code>numero</code></td><td>Não</td></tr>
+      <tr><td><code>complemento</code></td><td><code>complemento</code></td><td>Sim</td></tr>
+      <tr><td><code>bairro</code></td><td><code>bairro</code></td><td>Não</td></tr>
+      <tr><td><code>cidade</code></td><td><code>cidade</code></td><td>Não</td></tr>
+      <tr><td><code>estado</code></td><td><code>estado</code></td><td>Não</td></tr>
+      <tr><td><code>cep</code></td><td><code>cep</code></td><td>Não</td></tr>
+    </tbody>
+  </table>
+
+  <!-- UserType -->
+  <h3>3.3 Enum UserType</h3>
+  <p>
+    O enum diferencia os dois perfis de usuário do sistema. É persistido como texto graças ao <span class="mono">@Enumerated(EnumType.STRING)</span> na entidade User.
+  </p>
+  <div class="code-block">
+<span class="kw">public enum</span> <span class="ty">UserType</span> {
+    <span class="fi">OWNER</span>,      <span class="cm">// Dono de Restaurante</span>
+    <span class="fi">CUSTOMER</span>   <span class="cm">// Cliente</span>
+}
+  </div>
+
+  <div class="alert alert-warn">
+    <div class="alert-icon">⚠️</div>
+    <div>
+      <strong>Por que STRING e não ORDINAL?</strong> Com <code>EnumType.ORDINAL</code> o valor 0 ou 1 é salvo.
+      Se um novo valor for inserido no meio do enum no futuro, todos os registros existentes ficam com valores errados.
+      Com <code>EnumType.STRING</code>, o texto "OWNER"/"CUSTOMER" é salvo — resistente a mudanças de ordem.
+    </div>
+  </div>
+
+  <h3>3.4 Ciclo de vida JPA da entidade User</h3>
+  <p>O diagrama abaixo mostra quando os callbacks <span class="mono">@PrePersist</span> e <span class="mono">@PreUpdate</span> são disparados:</p>
+  <div class="arch-diagram" style="font-size:11px; line-height:1.8;">
+    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+      <span style="background:rgba(104,211,145,0.2); padding:6px 12px; border-radius:6px; color:#68d391;">new User()</span>
+      <span style="color:#4a5568;">→</span>
+      <span style="background:rgba(246,173,85,0.2); padding:6px 12px; border-radius:6px; color:#f6ad55;">@PrePersist<br><small>seta dataUltimaAlteracao</small></span>
+      <span style="color:#4a5568;">→</span>
+      <span style="background:rgba(118,228,247,0.2); padding:6px 12px; border-radius:6px; color:#76e4f7;">save()<br><small>INSERT no banco</small></span>
+      <span style="color:#4a5568;">→</span>
+      <span style="background:rgba(183,148,244,0.2); padding:6px 12px; border-radius:6px; color:#b794f4;">Managed State</span>
+    </div>
+    <div style="height:12px;"></div>
+    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+      <span style="background:rgba(183,148,244,0.2); padding:6px 12px; border-radius:6px; color:#b794f4;">user.setNome()</span>
+      <span style="color:#4a5568;">→</span>
+      <span style="background:rgba(246,173,85,0.2); padding:6px 12px; border-radius:6px; color:#f6ad55;">@PreUpdate<br><small>atualiza dataUltimaAlteracao</small></span>
+      <span style="color:#4a5568;">→</span>
+      <span style="background:rgba(118,228,247,0.2); padding:6px 12px; border-radius:6px; color:#76e4f7;">save()<br><small>UPDATE no banco</small></span>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     4. REPOSITORY
+════════════════════════════════════════════════ -->
+<div class="page pb">
+  <div class="section-header">
+    <div class="section-number">4</div>
+    <div class="section-title">Repositório — UserRepository</div>
+  </div>
+
+  <p>
+    O repositório é a camada responsável pelo acesso ao banco de dados. Com Spring Data JPA, não é necessário escrever SQL manualmente para operações simples —
+    basta declarar uma interface que estende <span class="mono">JpaRepository</span> e o Spring gera a implementação em tempo de execução.
+  </p>
+
+  <div class="code-label">src/main/java/br/com/fiap/restaurante/repository/UserRepository.java</div>
+  <div class="code-block">
+<span class="kw">public interface</span> <span class="ty">UserRepository</span> <span class="kw">extends</span> <span class="ty">JpaRepository</span>&lt;<span class="ty">User</span>, <span class="ty">Long</span>&gt; {
+
+    <span class="ty">Optional</span>&lt;<span class="ty">User</span>&gt; <span class="fi">findByEmail</span>(<span class="ty">String</span> email);
+    <span class="ty">Optional</span>&lt;<span class="ty">User</span>&gt; <span class="fi">findByLogin</span>(<span class="ty">String</span> login);
+    <span class="kw">boolean</span>         <span class="fi">existsByEmail</span>(<span class="ty">String</span> email);
+    <span class="kw">boolean</span>         <span class="fi">existsByLogin</span>(<span class="ty">String</span> login);
+}
+  </div>
+
+  <h3>O que JpaRepository já fornece gratuitamente</h3>
+  <table>
+    <thead><tr><th>Método herdado</th><th>SQL gerado</th><th>Uso previsto</th></tr></thead>
+    <tbody>
+      <tr><td><code>save(user)</code></td><td>INSERT ou UPDATE</td><td>Cadastro e atualização de usuário</td></tr>
+      <tr><td><code>findById(id)</code></td><td>SELECT ... WHERE id = ?</td><td>Buscar usuário por ID</td></tr>
+      <tr><td><code>deleteById(id)</code></td><td>DELETE ... WHERE id = ?</td><td>Excluir usuário</td></tr>
+      <tr><td><code>existsById(id)</code></td><td>SELECT count(*) WHERE id = ?</td><td>Verificar existência antes de operar</td></tr>
+      <tr><td><code>findAll()</code></td><td>SELECT * FROM users</td><td>Listar todos (uso interno/admin)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Queries derivadas por nome de método</h3>
+  <p>
+    O Spring Data JPA interpreta o nome do método e <strong>gera o SQL automaticamente</strong>. Não há implementação manual.
+  </p>
+  <table>
+    <thead><tr><th>Método declarado</th><th>SQL gerado pelo Spring</th><th>Retorno</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>findByEmail(email)</code></td>
+        <td><code>SELECT * FROM users WHERE email = ?</code></td>
+        <td><code>Optional&lt;User&gt;</code> — vazio se não encontrado</td>
+      </tr>
+      <tr>
+        <td><code>findByLogin(login)</code></td>
+        <td><code>SELECT * FROM users WHERE login = ?</code></td>
+        <td><code>Optional&lt;User&gt;</code> — usado na validação de login</td>
+      </tr>
+      <tr>
+        <td><code>existsByEmail(email)</code></td>
+        <td><code>SELECT count(*) > 0 WHERE email = ?</code></td>
+        <td><code>boolean</code> — mais eficiente que findBy para checar unicidade</td>
+      </tr>
+      <tr>
+        <td><code>existsByLogin(login)</code></td>
+        <td><code>SELECT count(*) > 0 WHERE login = ?</code></td>
+        <td><code>boolean</code> — verificação de duplicidade no cadastro</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="alert alert-info">
+    <div class="alert-icon">💡</div>
+    <div>
+      <strong>Por que Optional e não User diretamente?</strong>
+      Retornar <code>Optional&lt;User&gt;</code> força o código chamador a tratar explicitamente o caso de "não encontrado",
+      eliminando NullPointerException e tornando o código mais seguro e legível.
+      O Service deve chamar <code>.orElseThrow(() -&gt; new UserNotFoundException(...))</code>.
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     5. FLYWAY
+════════════════════════════════════════════════ -->
+<div class="page pb">
+  <div class="section-header">
+    <div class="section-number">5</div>
+    <div class="section-title">Migrations com Flyway</div>
+  </div>
+
+  <p>
+    O Flyway é responsável por criar e evoluir o schema do banco de dados de forma controlada e versionada.
+    Em vez de deixar o Hibernate criar as tabelas automaticamente (ddl-auto: create), usamos scripts SQL explícitos —
+    o que garante controle total sobre o schema e evita surpresas em produção.
+  </p>
+
+  <h3>Como funciona o Flyway</h3>
+  <div class="arch-diagram" style="line-height:2; font-size:12px;">
+    <span style="color:#68d391;">1.</span> Aplicação sobe → Flyway escaneia <span style="color:#f6ad55;">classpath:db/migration/</span><br>
+    <span style="color:#68d391;">2.</span> Lê todos os arquivos no padrão <span style="color:#f6ad55;">V{versão}__{descrição}.sql</span><br>
+    <span style="color:#68d391;">3.</span> Consulta a tabela interna <span style="color:#b794f4;">flyway_schema_history</span> no banco<br>
+    <span style="color:#68d391;">4.</span> Executa apenas os scripts ainda não aplicados (novos)<br>
+    <span style="color:#68d391;">5.</span> Registra cada execução com checksum na tabela de histórico<br>
+    <span style="color:#68d391;">6.</span> Aplicação continua a inicialização normalmente
+  </div>
+
+  <h3>Convenção de nomenclatura dos arquivos</h3>
+  <div class="code-block">
+V<span class="nu">1</span>__create_users.sql      <span class="cm">← V + versão + __ (dois underscores) + descrição</span>
+V<span class="nu">2</span>__add_index_email.sql
+V<span class="nu">3</span>__add_column_phone.sql
+  </div>
+
+  <div class="alert alert-warn">
+    <div class="alert-icon">⚠️</div>
+    <div>
+      <strong>Scripts Flyway jamais devem ser alterados após serem executados.</strong>
+      O Flyway grava o checksum de cada arquivo. Se o conteúdo mudar, ele lança erro na próxima subida.
+      Para corrigir algo, sempre crie um novo arquivo V2__, V3__...
+    </div>
+  </div>
+
+  <h3>Script V1 — Criação da tabela users</h3>
+  <div class="code-label">src/main/resources/db/migration/V1__create_users.sql</div>
+  <div class="code-block">
+<span class="cm">-- V1: Criação da tabela de usuários</span>
+
+<span class="kw">CREATE TABLE</span> users (
+    id                    <span class="ty">BIGSERIAL</span>     <span class="kw">PRIMARY KEY</span>,
+    nome                  <span class="ty">VARCHAR</span>(<span class="nu">100</span>)  <span class="kw">NOT NULL</span>,
+    email                 <span class="ty">VARCHAR</span>(<span class="nu">150</span>)  <span class="kw">NOT NULL UNIQUE</span>,
+    login                 <span class="ty">VARCHAR</span>(<span class="nu">50</span>)   <span class="kw">NOT NULL UNIQUE</span>,
+    senha                 <span class="ty">VARCHAR</span>(<span class="nu">255</span>)  <span class="kw">NOT NULL</span>,   <span class="cm">-- hash BCrypt (60 chars)</span>
+    data_ultima_alteracao <span class="ty">TIMESTAMP</span>     <span class="kw">NOT NULL</span>,
+    tipo                  <span class="ty">VARCHAR</span>(<span class="nu">20</span>)   <span class="kw">NOT NULL</span>,   <span class="cm">-- OWNER ou CUSTOMER</span>
+
+    <span class="cm">-- Campos do Address (@Embedded)</span>
+    logradouro            <span class="ty">VARCHAR</span>(<span class="nu">200</span>)  <span class="kw">NOT NULL</span>,
+    numero                <span class="ty">VARCHAR</span>(<span class="nu">20</span>)   <span class="kw">NOT NULL</span>,
+    complemento           <span class="ty">VARCHAR</span>(<span class="nu">100</span>),            <span class="cm">-- nullable</span>
+    bairro                <span class="ty">VARCHAR</span>(<span class="nu">100</span>)  <span class="kw">NOT NULL</span>,
+    cidade                <span class="ty">VARCHAR</span>(<span class="nu">100</span>)  <span class="kw">NOT NULL</span>,
+    estado                <span class="ty">VARCHAR</span>(<span class="nu">2</span>)    <span class="kw">NOT NULL</span>,   <span class="cm">-- sigla UF (SP, RJ...)</span>
+    cep                   <span class="ty">VARCHAR</span>(<span class="nu">9</span>)    <span class="kw">NOT NULL</span>    <span class="cm">-- formato: XXXXX-XXX</span>
+);
+  </div>
+
+  <h4>Pontos importantes do script</h4>
+  <ul>
+    <li><span class="mono">BIGSERIAL</span> é o tipo PostgreSQL para Long auto-increment (equivale a BIGINT + sequência automática)</li>
+    <li><span class="mono">senha VARCHAR(255)</span> — o hash BCrypt tem sempre 60 caracteres, mas 255 dá margem para outros algoritmos futuros</li>
+    <li><span class="mono">tipo VARCHAR(20)</span> — armazena o texto do enum ("OWNER" ou "CUSTOMER")</li>
+    <li><span class="mono">estado VARCHAR(2)</span> — apenas a sigla da UF (SP, RJ, MG...)</li>
+    <li>Os campos de endereço fazem parte da mesma tabela (sem JOIN) por causa do <span class="mono">@Embedded</span></li>
+  </ul>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     6. CONFIGURAÇÕES
+════════════════════════════════════════════════ -->
+<div class="page pb">
+  <div class="section-header">
+    <div class="section-number">6</div>
+    <div class="section-title">Configurações da Aplicação</div>
+  </div>
+
+  <h3>6.1 application.yml — Perfil padrão (produção/Docker)</h3>
+  <div class="code-label">src/main/resources/application.yml</div>
+  <div class="code-block">
+spring:
+  application:
+    name: restaurante-usuarios
+
+  datasource:
+    url: jdbc:postgresql://<span class="st">${DB_HOST:localhost}</span>:<span class="st">${DB_PORT:5432}</span>/<span class="st">${DB_NAME:restaurante_db}</span>
+    username: <span class="st">${DB_USER:postgres}</span>
+    password: <span class="st">${DB_PASSWORD:postgres}</span>
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: <span class="an">validate</span>        <span class="cm"># Flyway é o responsável pelo schema</span>
+    show-sql: <span class="kw">false</span>
+    properties:
+      hibernate:
+        format_sql: <span class="kw">true</span>
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  flyway:
+    enabled: <span class="kw">true</span>
+    locations: classpath:db/migration
+    baseline-on-migrate: <span class="kw">true</span>
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+
+server:
+  port: <span class="st">${SERVER_PORT:8080}</span>
+  </div>
+
+  <h4>Variáveis de ambiente e seus defaults</h4>
+  <table>
+    <thead><tr><th>Variável</th><th>Default (local)</th><th>Valor no Docker</th><th>Finalidade</th></tr></thead>
+    <tbody>
+      <tr><td><code>DB_HOST</code></td><td>localhost</td><td>postgres</td><td>Host do PostgreSQL</td></tr>
+      <tr><td><code>DB_PORT</code></td><td>5432</td><td>5432</td><td>Porta do banco</td></tr>
+      <tr><td><code>DB_NAME</code></td><td>restaurante_db</td><td>restaurante_db</td><td>Nome do banco</td></tr>
+      <tr><td><code>DB_USER</code></td><td>postgres</td><td>postgres</td><td>Usuário do banco</td></tr>
+      <tr><td><code>DB_PASSWORD</code></td><td>postgres</td><td>postgres</td><td>Senha do banco</td></tr>
+      <tr><td><code>SERVER_PORT</code></td><td>8080</td><td>8080</td><td>Porta HTTP da app</td></tr>
+    </tbody>
+  </table>
+
+  <div class="alert alert-info">
+    <div class="alert-icon">💡</div>
+    <div>
+      <strong>Por que <code>ddl-auto: validate</code>?</strong> Com essa configuração, o Hibernate
+      não cria nem altera tabelas — ele apenas verifica se o schema atual do banco é compatível com as entidades JPA.
+      Qualquer divergência causa erro na inicialização. Quem cria o schema é exclusivamente o Flyway.
+    </div>
+  </div>
+
+  <h3>6.2 application-test.yml — Perfil de testes (H2 in-memory)</h3>
+  <div class="code-label">src/main/resources/application-test.yml</div>
+  <div class="code-block">
+spring:
+  datasource:
+    url: jdbc:h2:mem:restaurante_test;DB_CLOSE_DELAY=-<span class="nu">1</span>;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: <span class="an">create-drop</span>   <span class="cm"># cria schema ao subir e destrói ao encerrar</span>
+    show-sql: <span class="kw">true</span>
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+
+  flyway:
+    enabled: <span class="kw">false</span>              <span class="cm"># H2 usa ddl-auto no perfil de teste</span>
+
+  h2:
+    console:
+      enabled: <span class="kw">true</span>
+      path: /h2-console
+  </div>
+
+  <p>
+    O perfil <span class="mono">test</span> é ativado com a anotação <span class="mono">@ActiveProfiles("test")</span> nos testes:
+  </p>
+  <div class="code-block">
+<span class="an">@SpringBootTest</span>
+<span class="an">@ActiveProfiles</span>(<span class="st">"test"</span>)
+<span class="kw">class</span> <span class="ty">RestauranteUsuariosApplicationTests</span> {
+    <span class="an">@Test</span>
+    <span class="kw">void</span> contextLoads() { }   <span class="cm">// apenas verifica se o contexto Spring sobe sem erros</span>
+}
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     7. SECURITY
+════════════════════════════════════════════════ -->
+<div class="page pb">
+  <div class="section-header">
+    <div class="section-number">7</div>
+    <div class="section-title">Segurança — SecurityConfig</div>
+  </div>
+
+  <p>
+    A configuração de segurança tem dois objetivos nesta fase do projeto:
+    <strong>(1)</strong> disponibilizar o <span class="mono">BCryptPasswordEncoder</span> como bean para criptografar senhas,
+    e <strong>(2)</strong> desabilitar a autenticação HTTP padrão do Spring Security para que os endpoints fiquem acessíveis.
+  </p>
+
+  <div class="code-label">src/main/java/br/com/fiap/restaurante/config/SecurityConfig.java</div>
+  <div class="code-block">
+<span class="an">@Configuration</span>
+<span class="an">@EnableWebSecurity</span>
+<span class="kw">public class</span> <span class="ty">SecurityConfig</span> {
+
+    <span class="an">@Bean</span>
+    <span class="kw">public</span> <span class="ty">PasswordEncoder</span> passwordEncoder() {
+        <span class="kw">return new</span> <span class="ty">BCryptPasswordEncoder</span>();
+    }
+
+    <span class="an">@Bean</span>
+    <span class="kw">public</span> <span class="ty">SecurityFilterChain</span> securityFilterChain(<span class="ty">HttpSecurity</span> http) <span class="kw">throws</span> Exception {
+        http
+            .csrf(AbstractHttpConfigurer::disable)
+            .authorizeHttpRequests(auth -> auth
+                .anyRequest().permitAll()
+            );
+        <span class="kw">return</span> http.build();
+    }
+}
+  </div>
+
+  <h3>Por que isso é necessário?</h3>
+  <p>
+    Ao incluir <span class="mono">spring-boot-starter-security</span> no projeto, o Spring Security automaticamente
+    protege <strong>todos</strong> os endpoints com autenticação HTTP Basic.
+    Como o projeto implementa autenticação própria via <span class="mono">POST /usuarios/login</span>,
+    a proteção padrão é desativada intencionalmente.
+  </p>
+
+  <table>
+    <thead><tr><th>Configuração</th><th>Efeito</th><th>Motivação</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>BCryptPasswordEncoder @Bean</code></td>
+        <td>Disponibiliza o encoder no container Spring</td>
+        <td>O Service pode injetar e usar para hash de senhas</td>
+      </tr>
+      <tr>
+        <td><code>.csrf(disable)</code></td>
+        <td>Desabilita proteção CSRF</td>
+        <td>APIs REST stateless não usam cookies de sessão, tornando CSRF irrelevante</td>
+      </tr>
+      <tr>
+        <td><code>.anyRequest().permitAll()</code></td>
+        <td>Libera todos os endpoints sem autenticação HTTP</td>
+        <td>Autenticação é tratada na camada de negócio via POST /login</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Como o BCrypt será usado pelo Service (a implementar)</h3>
+  <div class="code-block">
+<span class="an">@Service</span>
+<span class="kw">public class</span> <span class="ty">UserService</span> {
+
+    <span class="kw">private final</span> <span class="ty">PasswordEncoder</span> passwordEncoder;  <span class="cm">// injetado do SecurityConfig</span>
+
+    <span class="cm">// Cadastro — criptografar antes de salvar</span>
+    user.setSenha(passwordEncoder.encode(request.getSenha()));
+
+    <span class="cm">// Login — comparar hash armazenado com senha informada</span>
+    passwordEncoder.matches(senhaInformada, user.getSenha());
+}
+  </div>
+
+  <div class="alert alert-warn">
+    <div class="alert-icon">⚠️</div>
+    <div>
+      <strong>BCrypt é unidirecional.</strong> Não é possível "descriptografar" uma senha BCrypt.
+      Para validar o login, usa-se <code>passwordEncoder.matches(raw, hash)</code> — que recalcula
+      e compara o hash, sem nunca expor a senha original.
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     8. SWAGGER
+════════════════════════════════════════════════ -->
+<div class="page pb">
+  <div class="section-header">
+    <div class="section-number">8</div>
+    <div class="section-title">Swagger / OpenAPI</div>
+  </div>
+
+  <p>
+    A documentação interativa da API é gerada automaticamente pelo <strong>Springdoc OpenAPI 2.5.0</strong>.
+    Com essa biblioteca, o Swagger UI é disponibilizado sem nenhuma configuração adicional — basta ter os
+    controllers anotados.
+  </p>
+
+  <div class="code-label">src/main/java/br/com/fiap/restaurante/config/OpenApiConfig.java</div>
+  <div class="code-block">
+<span class="an">@Configuration</span>
+<span class="kw">public class</span> <span class="ty">OpenApiConfig</span> {
+
+    <span class="an">@Bean</span>
+    <span class="kw">public</span> <span class="ty">OpenAPI</span> customOpenAPI() {
+        <span class="kw">return new</span> <span class="ty">OpenAPI</span>()
+            .info(<span class="kw">new</span> <span class="ty">Info</span>()
+                .title(<span class="st">"Restaurante — Gestão de Usuários"</span>)
+                .version(<span class="st">"1.0"</span>)
+                .description(<span class="st">"API para cadastro e gerenciamento de usuários do sistema de restaurantes. POSTECH FIAP — Arquitetura e Desenvolvimento Java — Fase 1"</span>));
+    }
+}
+  </div>
+
+  <h3>Endpoints disponibilizados automaticamente</h3>
+  <table>
+    <thead><tr><th>URL</th><th>Descrição</th></tr></thead>
+    <tbody>
+      <tr><td><code>http://localhost:8080/swagger-ui.html</code></td><td>Interface gráfica Swagger UI — para testar os endpoints no browser</td></tr>
+      <tr><td><code>http://localhost:8080/v3/api-docs</code></td><td>Especificação OpenAPI em formato JSON — pode ser importado no Postman</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Anotações que a Pessoa 4 usará nos controllers</h3>
+  <table>
+    <thead><tr><th>Anotação</th><th>Onde usar</th><th>O que documenta</th></tr></thead>
+    <tbody>
+      <tr><td><code>@Operation(summary = "...")</code></td><td>Método do controller</td><td>Título curto do endpoint no Swagger</td></tr>
+      <tr><td><code>@ApiResponse(responseCode="200")</code></td><td>Método do controller</td><td>Documenta os possíveis retornos HTTP</td></tr>
+      <tr><td><code>@Tag(name = "Usuários")</code></td><td>Classe controller</td><td>Agrupa endpoints na UI do Swagger</td></tr>
+      <tr><td><code>@Schema(description="...")</code></td><td>Campos do DTO</td><td>Descreve campos no schema do payload</td></tr>
+    </tbody>
+  </table>
+
+  <div class="alert alert-ok">
+    <div class="alert-icon">✅</div>
+    <div>
+      A URL <strong>http://localhost:8080/swagger-ui.html</strong> está configurada no <code>application.yml</code>
+      via <code>springdoc.swagger-ui.path</code>. Após os controllers serem implementados, todos os endpoints
+      aparecerão automaticamente na interface.
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     9. DOCKER
+════════════════════════════════════════════════ -->
+<div class="page pb">
+  <div class="section-header">
+    <div class="section-number">9</div>
+    <div class="section-title">Infraestrutura Docker</div>
+  </div>
+
+  <h3>9.1 Dockerfile — Build multi-stage</h3>
+  <p>
+    O Dockerfile usa <strong>multi-stage build</strong>: o primeiro estágio compila o código com Maven e JDK,
+    o segundo estágio copia apenas o JAR gerado para uma imagem mínima com JRE. Isso resulta em uma imagem final
+    significativamente menor.
+  </p>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title"><div class="dot"></div>Stage 1 — Build</div>
+      <ul>
+        <li>Imagem base: <span class="mono">maven:3.9.6-eclipse-temurin-17</span></li>
+        <li>Copia o <span class="mono">pom.xml</span> e baixa dependências (cache de camada Docker)</li>
+        <li>Copia o <span class="mono">src/</span> e executa <span class="mono">mvn package -DskipTests</span></li>
+        <li>Gera o JAR em <span class="mono">/app/target/*.jar</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="dot"></div>Stage 2 — Runtime</div>
+      <ul>
+        <li>Imagem base: <span class="mono">eclipse-temurin:17-jre-alpine</span> (mínima)</li>
+        <li>Cria usuário não-root <span class="mono">appuser</span> por segurança</li>
+        <li>Copia o JAR do Stage 1</li>
+        <li>Expõe porta 8080</li>
+        <li>Executa com <span class="mono">java -jar app.jar</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>9.2 docker-compose.yml</h3>
+  <p>Define dois serviços: o banco de dados PostgreSQL e a aplicação Spring Boot.</p>
+
+  <table>
+    <thead><tr><th>Serviço</th><th>Imagem</th><th>Porta</th><th>Detalhe importante</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>postgres</code></td>
+        <td><code>postgres:16-alpine</code></td>
+        <td>5432:5432</td>
+        <td>Healthcheck com <code>pg_isready</code> — a app só sobe após o banco estar pronto</td>
+      </tr>
+      <tr>
+        <td><code>app</code></td>
+        <td>Build local (Dockerfile)</td>
+        <td>8080:8080</td>
+        <td><code>depends_on: postgres: condition: service_healthy</code> — evita falhas de conexão na inicialização</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Fluxo de inicialização</h3>
+  <div class="arch-diagram" style="font-size:11px; line-height:2;">
+    <span style="color:#68d391;">docker compose up --build</span><br>
+    → Docker constrói a imagem da app (Stage 1: Maven build → Stage 2: JRE)<br>
+    → Sobe o container <span style="color:#f6ad55;">postgres</span> e aguarda <span style="color:#b794f4;">healthcheck</span> (pg_isready)<br>
+    → Após postgres healthy, sobe o container <span style="color:#76e4f7;">app</span><br>
+    → Spring Boot inicia → Flyway executa <span style="color:#f6ad55;">V1__create_users.sql</span><br>
+    → Hibernate valida schema com <span style="color:#e94560;">ddl-auto: validate</span><br>
+    → API disponível em <span style="color:#68d391;">http://localhost:8080</span>
+  </div>
+
+  <h3>Comandos úteis</h3>
+  <div class="code-block">
+<span class="cm"># Subir tudo (build + banco + app)</span>
+docker compose up --build
+
+<span class="cm"># Subir em background</span>
+docker compose up --build -d
+
+<span class="cm"># Parar e remover containers</span>
+docker compose down
+
+<span class="cm"># Parar e remover containers + volume do banco (reset total)</span>
+docker compose down -v
+
+<span class="cm"># Ver logs da aplicação</span>
+docker compose logs -f app
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     10. DEPENDÊNCIAS
+════════════════════════════════════════════════ -->
+<div class="page pb">
+  <div class="section-header">
+    <div class="section-number">10</div>
+    <div class="section-title">Dependências — pom.xml</div>
+  </div>
+
+  <table>
+    <thead><tr><th>Dependência</th><th>Escopo</th><th>Finalidade</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>spring-boot-starter-web</code></td>
+        <td><span class="tag">compile</span></td>
+        <td>Servidor HTTP embutido (Tomcat), MVC, serialização JSON (Jackson)</td>
+      </tr>
+      <tr>
+        <td><code>spring-boot-starter-data-jpa</code></td>
+        <td><span class="tag">compile</span></td>
+        <td>Hibernate ORM + Spring Data JPA (repositories, @Entity, @Transactional)</td>
+      </tr>
+      <tr>
+        <td><code>spring-boot-starter-validation</code></td>
+        <td><span class="tag">compile</span></td>
+        <td>Jakarta Bean Validation — @NotBlank, @Email, @Size, @Valid</td>
+      </tr>
+      <tr>
+        <td><code>spring-boot-starter-security</code></td>
+        <td><span class="tag">compile</span></td>
+        <td>BCryptPasswordEncoder para hash de senhas</td>
+      </tr>
+      <tr>
+        <td><code>lombok</code></td>
+        <td><span class="tag gray">optional</span></td>
+        <td>Gera getters/setters/construtores em tempo de compilação — não vai para o JAR final</td>
+      </tr>
+      <tr>
+        <td><code>spring-boot-devtools</code></td>
+        <td><span class="tag gray">runtime optional</span></td>
+        <td>Restart automático em desenvolvimento — não impacta produção</td>
+      </tr>
+      <tr>
+        <td><code>postgresql</code></td>
+        <td><span class="tag gray">runtime</span></td>
+        <td>Driver JDBC do PostgreSQL — necessário em tempo de execução</td>
+      </tr>
+      <tr>
+        <td><code>h2</code></td>
+        <td><span class="tag gray">runtime</span> <span class="tag red">⚠</span></td>
+        <td>Banco in-memory para testes — deveria ter escopo <code>test</code> para não entrar no JAR de produção</td>
+      </tr>
+      <tr>
+        <td><code>flyway-core</code></td>
+        <td><span class="tag">compile</span></td>
+        <td>Motor central do Flyway para execução das migrations</td>
+      </tr>
+      <tr>
+        <td><code>flyway-database-postgresql</code></td>
+        <td><span class="tag">compile</span></td>
+        <td>Suporte específico do Flyway para PostgreSQL (necessário no Flyway 10+)</td>
+      </tr>
+      <tr>
+        <td><code>springdoc-openapi-starter-webmvc-ui</code></td>
+        <td><span class="tag">compile</span></td>
+        <td>Gera Swagger UI e json de especificação OpenAPI 3 automaticamente</td>
+      </tr>
+      <tr>
+        <td><code>spring-boot-starter-test</code></td>
+        <td><span class="tag purple">test</span></td>
+        <td>JUnit 5, Mockito, AssertJ, MockMvc — suite completa de testes</td>
+      </tr>
+      <tr>
+        <td><code>spring-security-test</code></td>
+        <td><span class="tag purple">test</span></td>
+        <td>Suporte a testes com contexto Spring Security (@WithMockUser, etc.)</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     11. O QUE FALTA
+════════════════════════════════════════════════ -->
+<div class="page pb">
+  <div class="section-header">
+    <div class="section-number">11</div>
+    <div class="section-title">O que falta implementar</div>
+  </div>
+
+  <p>
+    O projeto está na fase de setup e domínio. As camadas de aplicação (service, controller, DTOs, exception handler) ainda precisam ser criadas.
+    Abaixo estão todas as tarefas pendentes organizadas por responsável.
+  </p>
+
+  <h3>Pessoa 3 — Service Layer</h3>
+  <table>
+    <thead><tr><th>#</th><th>O que criar</th><th>Detalhes</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Cadastro de usuário</td><td>Verificar unicidade de email/login com <code>existsByEmail/existsByLogin</code>, hash BCrypt, <code>save()</code></td></tr>
+      <tr><td>2</td><td>Atualização de dados</td><td>Buscar por ID, atualizar campos, <code>save()</code> — <code>@PreUpdate</code> atualiza a data automaticamente</td></tr>
+      <tr><td>3</td><td>Troca de senha</td><td>Validar senha atual com <code>passwordEncoder.matches()</code>, hash da nova, persistir</td></tr>
+      <tr><td>4</td><td>Validação de login</td><td><code>findByLogin()</code>, <code>passwordEncoder.matches()</code>, retornar sucesso/falha</td></tr>
+      <tr><td>5</td><td>Exclusão de usuário</td><td><code>findById()</code> + <code>deleteById()</code>, lançar <code>UserNotFoundException</code> se não existir</td></tr>
+      <tr><td>6</td><td>Exceções customizadas</td><td><code>UserNotFoundException</code>, <code>DuplicateEmailException</code>, <code>InvalidCredentialsException</code></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Pessoa 4 — Controllers, DTOs e Exception Handler</h3>
+  <table>
+    <thead><tr><th>#</th><th>O que criar</th><th>Detalhes</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>DTOs de Request</td><td><code>CreateUserRequest</code>, <code>UpdateUserRequest</code>, <code>ChangePasswordRequest</code>, <code>LoginRequest</code></td></tr>
+      <tr><td>2</td><td>DTOs de Response</td><td><code>UserResponse</code> — nunca expor o campo <code>senha</code></td></tr>
+      <tr><td>3</td><td>UserController</td><td>POST /usuarios, GET /usuarios/{id}, PUT /usuarios/{id}, DELETE /usuarios/{id}, POST /usuarios/login, PATCH /usuarios/{id}/senha</td></tr>
+      <tr><td>4</td><td>GlobalExceptionHandler</td><td><code>@ControllerAdvice</code> — mapear exceções para HTTP 400, 404, 409, 500</td></tr>
+      <tr><td>5</td><td>Anotações Swagger</td><td><code>@Operation</code>, <code>@ApiResponse</code>, <code>@Tag</code> nos endpoints</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Pessoa 5 — Testes e Documentação</h3>
+  <table>
+    <thead><tr><th>#</th><th>O que criar</th><th>Detalhes</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Testes unitários do UserService</td><td>JUnit 5 + Mockito — cobrir casos de sucesso, duplicidade, senha inválida</td></tr>
+      <tr><td>2</td><td>Collection Postman</td><td>Todos os endpoints com body de exemplo, exportar como JSON</td></tr>
+      <tr><td>3</td><td>Validação em ambiente Docker</td><td>Subir com <code>docker compose up</code> e testar todos os cenários</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Endpoints previstos na API</h3>
+  <table>
+    <thead><tr><th>Método</th><th>Rota</th><th>Descrição</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>POST</td><td>/usuarios</td><td>Cadastrar novo usuário</td><td><span class="tag red">Pendente</span></td></tr>
+      <tr><td>GET</td><td>/usuarios/{id}</td><td>Buscar usuário por ID</td><td><span class="tag red">Pendente</span></td></tr>
+      <tr><td>PUT</td><td>/usuarios/{id}</td><td>Atualizar dados do usuário</td><td><span class="tag red">Pendente</span></td></tr>
+      <tr><td>DELETE</td><td>/usuarios/{id}</td><td>Excluir usuário</td><td><span class="tag red">Pendente</span></td></tr>
+      <tr><td>POST</td><td>/usuarios/login</td><td>Validar login (autenticação)</td><td><span class="tag red">Pendente</span></td></tr>
+      <tr><td>PATCH</td><td>/usuarios/{id}/senha</td><td>Trocar senha</td><td><span class="tag red">Pendente</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="alert alert-warn">
+    <div class="alert-icon">⚠️</div>
+    <div>
+      <strong>Problema identificado:</strong> O H2 está declarado com escopo <code>runtime</code> no pom.xml,
+      o que o inclui no JAR de produção. Alterar para <code>test</code> resolve isso. Além disso,
+      o <code>application-test.yml</code> está em <code>src/main/resources</code> e deveria estar em
+      <code>src/test/resources</code> para não ser empacotado junto com o artefato final.
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

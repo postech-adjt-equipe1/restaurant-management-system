@@ -132,8 +132,8 @@ mvn spring-boot:run
 
 | Pessoa | Responsabilidade |
 |--------|-----------------|
-| Pessoa 1 | Arquitetura, Docker, Setup |
-| Pessoa 2 | Entidades JPA, Repositórios |
-| Pessoa 3 | Services, Regras de Negócio |
-| Pessoa 4 | Controllers, DTOs, Swagger |
-| Pessoa 5 | Testes, QA, Documentação |
+| Caio      | Arquitetura, Docker, Setup |
+| Igor      | Entidades JPA, Repositórios |
+| Armando   | Services, Regras de Negócio |
+| Luciano   | Controllers, DTOs, Swagger |
+| Jurineide | Testes, QA, Documentação |
