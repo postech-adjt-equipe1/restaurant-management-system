@@ -20,7 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  * <p>Rotas públicas:
  * <ul>
  *   <li>POST /auth/login  — autenticação e geração do token</li>
- *   <li>POST /users       — cadastro de novo usuário</li>
+ *   <li>POST /api/v1/usuarios — cadastro de novo usuário</li>
  *   <li>/swagger-ui/**   — documentação OpenAPI</li>
  *   <li>/v3/api-docs/**  — documentação OpenAPI</li>
  * </ul>
@@ -53,7 +53,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Endpoints públicos
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/usuarios").permitAll()
                         .requestMatchers(
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
