@@ -1,25 +1,18 @@
 package br.com.fiap.restaurante.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
-public class LoginResponse {
+public class LoginRequest {
 
-    private String token;
-    private String tipo;
-    private Long expiresIn;
+    @NotBlank
     private String login;
-    private String nome;
-    private String userType;
 
-    public LoginResponse(String token, Long expiresIn, String login, String nome, String userType) {
-        this.token = token;
-        this.tipo = "Bearer";
-        this.expiresIn = expiresIn;
-        this.login = login;
-        this.nome = nome;
-        this.userType = userType;
-    }
+    @NotBlank
+    private String senha;
 }

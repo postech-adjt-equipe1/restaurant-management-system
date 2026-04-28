@@ -1,0 +1,1065 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "name": "Restaurant Management API",
+    "description": "Collection completa para o sistema de gestão de restaurantes — POSTECH FIAP.\n\n**Setup:**\n1. Importe também o environment `restaurant-management-api.postman_environment.json`\n2. Configure `baseUrl` se necessário (padrão: `http://localhost:8080`)\n3. Execute primeiro **Login JWT** para gerar o token automaticamente",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Autenticação (JWT)",
+      "item": [
+        {
+          "name": "Login JWT - sucesso",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200 OK', () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Resposta contém token Bearer', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.token).to.be.a('string').and.not.empty;",
+                  "    pm.expect(body.tipo).to.eql('Bearer');",
+                  "    pm.expect(body.login).to.be.a('string');",
+                  "    pm.expect(body.nome).to.be.a('string');",
+                  "    pm.expect(body.userType).to.be.a('string');",
+                  "    pm.expect(body.expiresIn).to.be.a('number');",
+                  "});",
+                  "",
+                  "// Salva o token para uso nas próximas requisições",
+                  "const body = pm.response.json();",
+                  "pm.collectionVariables.set('jwtToken', body.token);",
+                  "pm.collectionVariables.set('loginAtual', body.login);",
+                  "console.log('Token JWT salvo:', body.token.substring(0, 30) + '...');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"login\": \"joao.silva\",\n  \"senha\": \"Senha@123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Autentica o usuário e retorna um token JWT Bearer.\n\n**Pré-requisito:** usuário `joao.silva` deve existir (execute 'Cadastro válido - CUSTOMER' primeiro).\n\nO token é salvo automaticamente na variável `jwtToken` para uso nas demais requisições."
+          },
+          "response": []
+        },
+        {
+          "name": "Login JWT - credenciais inválidas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 401 Unauthorized', () => {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "",
+                  "pm.test('Resposta contém mensagem de erro', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.status).to.eql(401);",
+                  "    pm.expect(body.detail).to.be.a('string');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"login\": \"joao.silva\",\n  \"senha\": \"senhaErrada\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Tenta autenticar com senha incorreta. Espera 401 com mensagem de erro no formato ProblemDetail."
+          },
+          "response": []
+        },
+        {
+          "name": "Login JWT - body vazio (validação)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400 Bad Request', () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Resposta contém erros de validação', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.status).to.eql(400);",
+                  "    pm.expect(body.campos).to.be.an('object');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Envia body vazio — deve falhar com 400 e erros de validação nos campos obrigatórios."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. Cadastro de Usuário",
+      "item": [
+        {
+          "name": "Cadastro válido - CUSTOMER",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201 Created', () => {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Resposta contém dados do usuário criado', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.id).to.be.a('number');",
+                  "    pm.expect(body.nome).to.eql('João Silva');",
+                  "    pm.expect(body.email).to.eql('joao@email.com');",
+                  "    pm.expect(body.login).to.eql('joao.silva');",
+                  "    pm.expect(body.tipo).to.eql('CUSTOMER');",
+                  "    pm.expect(body.endereco).to.be.an('object');",
+                  "});",
+                  "",
+                  "pm.test('Senha não é retornada na resposta', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.senha).to.be.undefined;",
+                  "});",
+                  "",
+                  "// Salva o ID para uso nas próximas requisições",
+                  "const body = pm.response.json();",
+                  "pm.collectionVariables.set('userId', body.id);",
+                  "console.log('userId salvo:', body.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"João Silva\",\n  \"email\": \"joao@email.com\",\n  \"login\": \"joao.silva\",\n  \"senha\": \"Senha@123\",\n  \"tipo\": \"CUSTOMER\",\n  \"endereco\": {\n    \"logradouro\": \"Rua das Flores\",\n    \"numero\": \"123\",\n    \"complemento\": \"Apto 45\",\n    \"bairro\": \"Centro\",\n    \"cidade\": \"São Paulo\",\n    \"estado\": \"SP\",\n    \"cep\": \"01310-100\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/usuarios",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "usuarios"]
+            },
+            "description": "Cria um novo usuário do tipo CUSTOMER com todos os campos obrigatórios.\n\nO `id` retornado é salvo automaticamente na variável `userId`."
+          },
+          "response": []
+        },
+        {
+          "name": "Cadastro válido - OWNER",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201 Created', () => {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Tipo do usuário é OWNER', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.tipo).to.eql('OWNER');",
+                  "    pm.expect(body.id).to.be.a('number');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Maria Proprietária\",\n  \"email\": \"maria.owner@email.com\",\n  \"login\": \"maria.owner\",\n  \"senha\": \"Senha@456\",\n  \"tipo\": \"OWNER\",\n  \"endereco\": {\n    \"logradouro\": \"Av. Paulista\",\n    \"numero\": \"1000\",\n    \"bairro\": \"Bela Vista\",\n    \"cidade\": \"São Paulo\",\n    \"estado\": \"SP\",\n    \"cep\": \"01310-100\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/usuarios",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "usuarios"]
+            },
+            "description": "Cria um usuário do tipo OWNER (proprietário de restaurante)."
+          },
+          "response": []
+        },
+        {
+          "name": "Cadastro inválido - e-mail duplicado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 409 Conflict', () => {",
+                  "    pm.response.to.have.status(409);",
+                  "});",
+                  "",
+                  "pm.test('Resposta indica conflito de e-mail', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.status).to.eql(409);",
+                  "    pm.expect(body.detail).to.include('joao@email.com');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Outro João\",\n  \"email\": \"joao@email.com\",\n  \"login\": \"outro.joao\",\n  \"senha\": \"Senha@789\",\n  \"tipo\": \"CUSTOMER\",\n  \"endereco\": {\n    \"logradouro\": \"Rua B\",\n    \"numero\": \"50\",\n    \"bairro\": \"Vila Nova\",\n    \"cidade\": \"São Paulo\",\n    \"estado\": \"SP\",\n    \"cep\": \"04001-000\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/usuarios",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "usuarios"]
+            },
+            "description": "Tenta cadastrar com um e-mail que já existe. Espera 409 Conflict.\n\n**Pré-requisito:** Execute 'Cadastro válido - CUSTOMER' primeiro."
+          },
+          "response": []
+        },
+        {
+          "name": "Cadastro inválido - login duplicado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 409 Conflict', () => {",
+                  "    pm.response.to.have.status(409);",
+                  "});",
+                  "",
+                  "pm.test('Resposta indica conflito de login', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.status).to.eql(409);",
+                  "    pm.expect(body.detail).to.include('joao.silva');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"João Diferente\",\n  \"email\": \"joao.diferente@email.com\",\n  \"login\": \"joao.silva\",\n  \"senha\": \"Senha@789\",\n  \"tipo\": \"CUSTOMER\",\n  \"endereco\": {\n    \"logradouro\": \"Rua C\",\n    \"numero\": \"200\",\n    \"bairro\": \"Pinheiros\",\n    \"cidade\": \"São Paulo\",\n    \"estado\": \"SP\",\n    \"cep\": \"05422-030\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/usuarios",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "usuarios"]
+            },
+            "description": "Tenta cadastrar com um login que já existe. Espera 409 Conflict.\n\n**Pré-requisito:** Execute 'Cadastro válido - CUSTOMER' primeiro."
+          },
+          "response": []
+        },
+        {
+          "name": "Cadastro inválido - campos obrigatórios faltando",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400 Bad Request', () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Resposta contém detalhes dos campos inválidos', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.status).to.eql(400);",
+                  "    pm.expect(body.title).to.eql('Erro de validação');",
+                  "    pm.expect(body.campos).to.be.an('object');",
+                  "    console.log('Campos com erro:', JSON.stringify(body.campos));",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"\",\n  \"email\": \"email-invalido\",\n  \"login\": \"ab\",\n  \"senha\": \"123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/usuarios",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "usuarios"]
+            },
+            "description": "Envia dados inválidos: nome vazio, e-mail sem formato, login curto demais, senha curta demais, tipo e endereço ausentes. Espera 400 com mapa de erros por campo."
+          },
+          "response": []
+        },
+        {
+          "name": "Cadastro inválido - senha curta demais",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400 Bad Request', () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Erro de validação na senha', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.campos).to.have.property('senha');",
+                  "    pm.expect(body.campos.senha).to.include('8');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Teste Senha\",\n  \"email\": \"teste.senha@email.com\",\n  \"login\": \"teste.senha\",\n  \"senha\": \"1234567\",\n  \"tipo\": \"CUSTOMER\",\n  \"endereco\": {\n    \"logradouro\": \"Rua Teste\",\n    \"numero\": \"1\",\n    \"bairro\": \"Centro\",\n    \"cidade\": \"SP\",\n    \"estado\": \"SP\",\n    \"cep\": \"01310-100\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/usuarios",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "usuarios"]
+            },
+            "description": "Senha com 7 caracteres (mínimo é 8). Espera 400 com erro no campo `senha`."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. Busca de Usuário",
+      "item": [
+        {
+          "name": "Busca por nome - encontrado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200 OK', () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Retorna lista com ao menos um usuário', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body).to.be.an('array').and.not.empty;",
+                  "    pm.expect(body[0]).to.have.property('id');",
+                  "    pm.expect(body[0]).to.have.property('nome');",
+                  "    pm.expect(body[0]).to.have.property('login');",
+                  "    pm.expect(body[0]).to.have.property('tipo');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/usuarios?nome=João",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "usuarios"],
+              "query": [
+                { "key": "nome", "value": "João" }
+              ]
+            },
+            "description": "Busca usuários pelo nome (case-insensitive, busca parcial).\n\n**Pré-requisito:** Execute 'Cadastro válido - CUSTOMER' primeiro."
+          },
+          "response": []
+        },
+        {
+          "name": "Busca por nome - não encontrado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200 OK', () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Retorna lista vazia', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body).to.be.an('array').and.empty;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/usuarios?nome=NomeQueNaoExiste",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "usuarios"],
+              "query": [
+                { "key": "nome", "value": "NomeQueNaoExiste" }
+              ]
+            },
+            "description": "Busca por nome que não existe. Espera 200 com lista vazia (não 404)."
+          },
+          "response": []
+        },
+        {
+          "name": "Busca por ID - encontrado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200 OK', () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Retorna dados completos do usuário', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.id).to.be.a('number');",
+                  "    pm.expect(body.nome).to.be.a('string');",
+                  "    pm.expect(body.email).to.be.a('string');",
+                  "    pm.expect(body.login).to.be.a('string');",
+                  "    pm.expect(body.tipo).to.be.oneOf(['CUSTOMER', 'OWNER']);",
+                  "    pm.expect(body.endereco).to.be.an('object');",
+                  "    pm.expect(body.dataUltimaAlteracao).to.be.a('string');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/usuarios/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "usuarios", "{{userId}}"]
+            },
+            "description": "Busca usuário pelo ID salvo em `userId`.\n\n**Pré-requisito:** Execute 'Cadastro válido - CUSTOMER' para popular `userId`."
+          },
+          "response": []
+        },
+        {
+          "name": "Busca por ID - não encontrado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 404 Not Found', () => {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test('Resposta contém mensagem de não encontrado', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.status).to.eql(404);",
+                  "    pm.expect(body.detail).to.include('99999');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/usuarios/99999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "usuarios", "99999"]
+            },
+            "description": "Busca por ID inexistente (99999). Espera 404 Not Found com ProblemDetail."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "4. Atualização de Dados",
+      "item": [
+        {
+          "name": "Atualizar dados - sucesso",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200 OK', () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Dados foram atualizados', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.nome).to.eql('João Silva Atualizado');",
+                  "    pm.expect(body.tipo).to.eql('OWNER');",
+                  "    pm.expect(body.id).to.eql(pm.collectionVariables.get('userId'));",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"João Silva Atualizado\",\n  \"email\": \"joao@email.com\",\n  \"tipo\": \"OWNER\",\n  \"endereco\": {\n    \"logradouro\": \"Av. Brasil\",\n    \"numero\": \"500\",\n    \"complemento\": \"Sala 10\",\n    \"bairro\": \"Consolação\",\n    \"cidade\": \"São Paulo\",\n    \"estado\": \"SP\",\n    \"cep\": \"01310-100\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/usuarios/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "usuarios", "{{userId}}"]
+            },
+            "description": "Atualiza nome, tipo e endereço do usuário.\n\n**Pré-requisito:** Execute 'Cadastro válido - CUSTOMER' para popular `userId` e `Login JWT - sucesso` para o token."
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar dados - e-mail duplicado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 409 Conflict', () => {",
+                  "    pm.response.to.have.status(409);",
+                  "});",
+                  "",
+                  "pm.test('Erro indica conflito de e-mail', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.status).to.eql(409);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"João Silva\",\n  \"email\": \"maria.owner@email.com\",\n  \"tipo\": \"CUSTOMER\",\n  \"endereco\": {\n    \"logradouro\": \"Rua A\",\n    \"numero\": \"1\",\n    \"bairro\": \"Centro\",\n    \"cidade\": \"São Paulo\",\n    \"estado\": \"SP\",\n    \"cep\": \"01310-100\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/usuarios/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "usuarios", "{{userId}}"]
+            },
+            "description": "Tenta atualizar usando um e-mail que pertence a outro usuário (maria.owner@email.com). Espera 409.\n\n**Pré-requisito:** Execute 'Cadastro válido - OWNER' para criar o segundo usuário."
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar dados - usuário não encontrado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 404 Not Found', () => {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Fantasma\",\n  \"email\": \"fantasma@email.com\",\n  \"tipo\": \"CUSTOMER\",\n  \"endereco\": {\n    \"logradouro\": \"Rua Inexistente\",\n    \"numero\": \"0\",\n    \"bairro\": \"Nenhum\",\n    \"cidade\": \"SP\",\n    \"estado\": \"SP\",\n    \"cep\": \"00000-000\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/usuarios/99999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "usuarios", "99999"]
+            },
+            "description": "Tenta atualizar um ID inexistente. Espera 404."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "5. Troca de Senha",
+      "item": [
+        {
+          "name": "Troca de senha - sucesso",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 204 No Content', () => {",
+                  "    pm.response.to.have.status(204);",
+                  "});",
+                  "",
+                  "pm.test('Corpo da resposta está vazio', () => {",
+                  "    pm.expect(pm.response.text()).to.eql('');",
+                  "});",
+                  "",
+                  "// Atualiza a senha corrente para testes subsequentes",
+                  "pm.collectionVariables.set('senhaAtual', 'NovaSenha@789');",
+                  "console.log('Senha atualizada para NovaSenha@789');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"senhaAtual\": \"Senha@123\",\n  \"novaSenha\": \"NovaSenha@789\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/usuarios/{{userId}}/senha",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "usuarios", "{{userId}}", "senha"]
+            },
+            "description": "Troca a senha do usuário informando a senha atual correta. Espera 204 sem corpo.\n\n**Pré-requisito:** usuário criado com senha `Senha@123`."
+          },
+          "response": []
+        },
+        {
+          "name": "Troca de senha - senha atual incorreta",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400 Bad Request', () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Erro indica senha incorreta', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.status).to.eql(400);",
+                  "    pm.expect(body.detail).to.include('Senha atual incorreta');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"senhaAtual\": \"SenhaErrada@000\",\n  \"novaSenha\": \"OutraSenha@321\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/usuarios/{{userId}}/senha",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "usuarios", "{{userId}}", "senha"]
+            },
+            "description": "Tenta trocar senha informando a senha atual errada. Espera 400 com mensagem 'Senha atual incorreta'."
+          },
+          "response": []
+        },
+        {
+          "name": "Troca de senha - nova senha curta demais",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400 Bad Request', () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Erro de validação na nova senha', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.campos).to.have.property('novaSenha');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"senhaAtual\": \"Senha@123\",\n  \"novaSenha\": \"curta\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/usuarios/{{userId}}/senha",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "usuarios", "{{userId}}", "senha"]
+            },
+            "description": "Nova senha com menos de 8 caracteres. Espera 400 com erro de validação no campo `novaSenha`."
+          },
+          "response": []
+        },
+        {
+          "name": "Troca de senha - usuário não encontrado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 404 Not Found', () => {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"senhaAtual\": \"Senha@123\",\n  \"novaSenha\": \"NovaSenha@789\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/usuarios/99999/senha",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "usuarios", "99999", "senha"]
+            },
+            "description": "Tenta trocar senha de um usuário inexistente. Espera 404."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "6. Validação de Login (endpoint legado)",
+      "item": [
+        {
+          "name": "Validação de login - sucesso",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200 OK', () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Retorna dados do usuário autenticado', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.login).to.eql('joao.silva');",
+                  "    pm.expect(body.nome).to.be.a('string');",
+                  "    pm.expect(body.tipo).to.be.oneOf(['CUSTOMER', 'OWNER']);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"login\": \"joao.silva\",\n  \"senha\": \"Senha@123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/usuarios/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "usuarios", "login"]
+            },
+            "description": "Endpoint de validação de credenciais que retorna os dados do usuário (sem gerar token JWT).\n\nDiferente de `/auth/login` — este retorna `UserResponseDTO` em vez de `LoginResponse`."
+          },
+          "response": []
+        },
+        {
+          "name": "Validação de login - credenciais inválidas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 401 Unauthorized', () => {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "",
+                  "pm.test('Mensagem de credenciais inválidas', () => {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.status).to.eql(401);",
+                  "    pm.expect(body.detail).to.include('Login ou senha inválidos');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"login\": \"joao.silva\",\n  \"senha\": \"senhaErrada\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/usuarios/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "usuarios", "login"]
+            },
+            "description": "Valida credenciais com senha errada. Espera 401 com mensagem 'Login ou senha inválidos'."
+          },
+          "response": []
+        },
+        {
+          "name": "Validação de login - usuário inexistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 401 Unauthorized', () => {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"login\": \"usuario.fantasma\",\n  \"senha\": \"qualquerSenha\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/usuarios/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "usuarios", "login"]
+            },
+            "description": "Login com usuário que não existe na base. Espera 401."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "7. Deleção de Usuário",
+      "item": [
+        {
+          "name": "Deletar usuário - sucesso",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 204 No Content', () => {",
+                  "    pm.response.to.have.status(204);",
+                  "});",
+                  "",
+                  "pm.test('Corpo da resposta está vazio', () => {",
+                  "    pm.expect(pm.response.text()).to.eql('');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/usuarios/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "usuarios", "{{userId}}"]
+            },
+            "description": "Remove o usuário pelo ID. Espera 204 sem corpo.\n\n**⚠️ Atenção:** Execute este por último, pois remove o usuário usado nos outros cenários."
+          },
+          "response": []
+        },
+        {
+          "name": "Deletar usuário - não encontrado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 404 Not Found', () => {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/usuarios/99999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "usuarios", "99999"]
+            },
+            "description": "Tenta remover um ID inexistente. Espera 404."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "jwtToken",
+      "value": "",
+      "type": "string",
+      "description": "Preenchido automaticamente pelo request 'Login JWT - sucesso'"
+    },
+    {
+      "key": "userId",
+      "value": "",
+      "type": "string",
+      "description": "Preenchido automaticamente pelo request 'Cadastro válido - CUSTOMER'"
+    },
+    {
+      "key": "loginAtual",
+      "value": "",
+      "type": "string",
+      "description": "Login do último usuário autenticado"
+    },
+    {
+      "key": "senhaAtual",
+      "value": "Senha@123",
+      "type": "string",
+      "description": "Senha atual do usuário (atualizada automaticamente após troca)"
+    }
+  ]
+}
