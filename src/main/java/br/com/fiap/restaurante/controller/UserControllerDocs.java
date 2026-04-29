@@ -1,5 +1,6 @@
 package br.com.fiap.restaurante.controller;
 
+import br.com.fiap.restaurante.dto.LoginResponse;
 import br.com.fiap.restaurante.dto.UserChangePasswordRequestDTO;
 import br.com.fiap.restaurante.dto.UserCreateRequestDTO;
 import br.com.fiap.restaurante.dto.UserLoginRequestDTO;
@@ -73,14 +74,14 @@ public interface UserControllerDocs {
     ResponseEntity<Void> delete(
             @Parameter(description = "ID do usuário", required = true) @PathVariable Long id);
 
-    @Operation(summary = "Login", description = "Valida as credenciais do usuário e retorna seus dados")
+    @Operation(summary = "Login", description = "Valida as credenciais do usuário e retorna um token JWT Bearer")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Login realizado com sucesso",
-                    content = @Content(schema = @Schema(implementation = UserResponseDTO.class))),
+                    content = @Content(schema = @Schema(implementation = LoginResponse.class))),
             @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content),
             @ApiResponse(responseCode = "401", description = "Credenciais incorretas", content = @Content)
     })
-    ResponseEntity<UserResponseDTO> login(@Valid @RequestBody UserLoginRequestDTO request);
+    ResponseEntity<LoginResponse> login(@Valid @RequestBody UserLoginRequestDTO request);
 
     @Operation(summary = "Alterar senha", description = "Altera a senha do usuário após confirmar a senha atual")
     @ApiResponses({

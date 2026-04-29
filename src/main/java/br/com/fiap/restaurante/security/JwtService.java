@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -13,25 +14,16 @@ import java.util.Date;
 import java.util.Map;
 import java.util.function.Function;
 
-/**
- * Serviço responsável por gerar, validar e extrair informações de tokens JWT.
- */
 @Service
 public class JwtService {
 
     @Value("${jwt.secret}")
     private String secret;
 
+    @Getter
     @Value("${jwt.expiration}")
     private long expirationMs;
 
-    // -----------------------------------------------------------------------
-    // Geração
-    // -----------------------------------------------------------------------
-
-    /**
-     * Gera um token JWT para o login informado com claims extras (tipo de usuário etc.).
-     */
     public String generateToken(String login, Map<String, Object> extraClaims) {
         return Jwts.builder()
                 .claims(extraClaims)
@@ -41,17 +33,6 @@ public class JwtService {
                 .signWith(getSigningKey())
                 .compact();
     }
-
-    /**
-     * Retorna a validade em milissegundos configurada.
-     */
-    public long getExpirationMs() {
-        return expirationMs;
-    }
-
-    // -----------------------------------------------------------------------
-    // Extração de claims
-    // -----------------------------------------------------------------------
 
     public String extractLogin(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -66,13 +47,6 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-    // -----------------------------------------------------------------------
-    // Validação
-    // -----------------------------------------------------------------------
-
-    /**
-     * Valida se o token é válido (assinatura correta e não expirado) para o login informado.
-     */
     public boolean isTokenValid(String token, String login) {
         try {
             String subject = extractLogin(token);
@@ -81,10 +55,6 @@ public class JwtService {
             return false;
         }
     }
-
-    // -----------------------------------------------------------------------
-    // Helpers privados
-    // -----------------------------------------------------------------------
 
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());

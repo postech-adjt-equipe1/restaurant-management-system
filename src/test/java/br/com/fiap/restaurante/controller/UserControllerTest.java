@@ -27,7 +27,9 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -326,20 +328,55 @@ class UserControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    // --- Segurança: endpoints protegidos requerem autenticação ---
+
+    @Test
+    void findById_deveRetornar401ou403_quandoSemAutenticacao() throws Exception {
+        mockMvc.perform(get("/api/v1/usuarios/1"))
+                .andExpect(result -> assertThat(result.getResponse().getStatus()).isIn(401, 403));
+    }
+
+    @Test
+    void update_deveRetornar401ou403_quandoSemAutenticacao() throws Exception {
+        UserUpdateRequestDTO request = UserUpdateRequestDTO.builder()
+                .nome("João")
+                .email("joao@email.com")
+                .tipo(UserType.CUSTOMER)
+                .endereco(addressDTO)
+                .build();
+
+        mockMvc.perform(put("/api/v1/usuarios/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(result -> assertThat(result.getResponse().getStatus()).isIn(401, 403));
+    }
+
+    @Test
+    void delete_deveRetornar401ou403_quandoSemAutenticacao() throws Exception {
+        mockMvc.perform(delete("/api/v1/usuarios/1"))
+                .andExpect(result -> assertThat(result.getResponse().getStatus()).isIn(401, 403));
+    }
+
     // --- POST /api/v1/usuarios/login ---
 
     @Test
     @WithMockUser
-    void login_deveRetornar200_quandoCredenciaisValidas() throws Exception {
+    void login_deveRetornar200ComToken_quandoCredenciaisValidas() throws Exception {
         UserLoginRequestDTO request = new UserLoginRequestDTO("joao.silva", "senha123");
         when(userService.validateLogin("joao.silva", "senha123")).thenReturn(user);
+        when(jwtService.generateToken(eq("joao.silva"), any(Map.class))).thenReturn("mocked-jwt-token");
+        when(jwtService.getExpirationMs()).thenReturn(86_400_000L);
 
         mockMvc.perform(post("/api/v1/usuarios/login").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").value("mocked-jwt-token"))
+                .andExpect(jsonPath("$.tipo").value("Bearer"))
                 .andExpect(jsonPath("$.login").value("joao.silva"))
-                .andExpect(jsonPath("$.nome").value("João Silva"));
+                .andExpect(jsonPath("$.nome").value("João Silva"))
+                .andExpect(jsonPath("$.userType").value("CUSTOMER"))
+                .andExpect(jsonPath("$.expiresIn").value(86_400_000));
     }
 
     @Test
