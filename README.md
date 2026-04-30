@@ -54,8 +54,7 @@ Backend em Spring Boot para cadastro e gerenciamento de usuários de um sistema 
 - Busca por ID e por nome (parcial, case-insensitive)
 - Atualização de dados cadastrais e exclusão (CRUD completo)
 - Troca de senha com validação da senha atual
-- Autenticação via JWT Bearer token (endpoint `/auth/login`)
-- Validação de login (endpoint legado `/api/v1/usuarios/login`)
+- Login com retorno de token JWT Bearer (endpoint `/api/v1/usuarios/login`)
 - Tratamento de erros padronizado com **ProblemDetail** (RFC 7807)
 - Documentação interativa via Swagger UI
 
@@ -85,15 +84,14 @@ br.com.fiap.restaurante
 │   ├── SecurityConfig.java          # Regras de autorização e filtro JWT
 │   └── OpenApiConfig.java           # Configuração do Swagger
 ├── controller/
-│   ├── AuthController.java          # POST /auth/login → gera token JWT
-│   ├── UserController.java          # CRUD + login + troca de senha
+│   ├── UserController.java          # CRUD + login (com JWT) + troca de senha
 │   └── UserControllerDocs.java      # Interface com anotações Swagger
 ├── dto/
-│   ├── LoginRequest / LoginResponse # Autenticação JWT
+│   ├── LoginResponse                # Resposta do login (token JWT)
 │   ├── UserCreateRequestDTO         # Criação de usuário
 │   ├── UserUpdateRequestDTO         # Atualização de usuário
 │   ├── UserChangePasswordRequestDTO # Troca de senha
-│   ├── UserLoginRequestDTO          # Validação de login
+│   ├── UserLoginRequestDTO          # Credenciais de login
 │   ├── UserResponseDTO              # Resposta completa
 │   ├── UserSearchResponseDTO        # Resposta resumida (busca)
 │   └── AddressRequest/ResponseDTO   # Endereço
@@ -121,9 +119,9 @@ br.com.fiap.restaurante
 ### Fluxo de autenticação
 
 ```
-Cliente → POST /auth/login → UserService.validateLogin() → JwtService.generateToken()
-                                                                    ↓
-                                                          { token, tipo, expiresIn }
+Cliente → POST /api/v1/usuarios/login → UserService.validateLogin() → JwtService.generateToken()
+                                                                               ↓
+                                                                     { token, tipo, expiresIn }
 
 Cliente → GET /api/v1/usuarios/{id}
           Authorization: Bearer <token>
@@ -202,17 +200,22 @@ Todas as variáveis possuem valor padrão para desenvolvimento local.
 
 ## Endpoints da API
 
-### Autenticação
+### Usuários
 
-| Método | Rota | Auth | Descrição |
-|--------|------|------|-----------|
-| `POST` | `/auth/login` | Pública | Autentica e retorna token JWT |
+Prefixo: `/api/v1/usuarios`
 
-**Request:**
+| Método | Rota | Auth | Descrição | Status de sucesso |
+|--------|------|------|-----------|-------------------|
+| `POST` | `/api/v1/usuarios` | Pública | Cadastrar novo usuário | `201 Created` |
+| `POST` | `/api/v1/usuarios/login` | Pública | Autenticar e retornar token JWT | `200 OK` |
+| `GET` | `/api/v1/usuarios?nome=X` | JWT | Buscar usuários por nome | `200 OK` |
+| `GET` | `/api/v1/usuarios/{id}` | JWT | Buscar usuário por ID | `200 OK` |
+| `PUT` | `/api/v1/usuarios/{id}` | JWT | Atualizar dados (sem senha) | `200 OK` |
+| `PATCH` | `/api/v1/usuarios/{id}/senha` | JWT | Trocar senha | `204 No Content` |
+| `DELETE` | `/api/v1/usuarios/{id}` | JWT | Excluir usuário | `204 No Content` |
+
+**Login** `POST /api/v1/usuarios/login`
 ```json
-POST /auth/login
-Content-Type: application/json
-
 {
   "login": "joao.silva",
   "senha": "Senha@123"
@@ -235,22 +238,6 @@ Use o token nas requisições protegidas:
 ```
 Authorization: Bearer eyJhbGciOiJIUzM4NCJ9...
 ```
-
----
-
-### Usuários
-
-Prefixo: `/api/v1/usuarios`
-
-| Método | Rota | Auth | Descrição | Status de sucesso |
-|--------|------|------|-----------|-------------------|
-| `POST` | `/api/v1/usuarios` | Pública | Cadastrar novo usuário | `201 Created` |
-| `GET` | `/api/v1/usuarios?nome=X` | JWT | Buscar usuários por nome | `200 OK` |
-| `GET` | `/api/v1/usuarios/{id}` | JWT | Buscar usuário por ID | `200 OK` |
-| `PUT` | `/api/v1/usuarios/{id}` | JWT | Atualizar dados (sem senha) | `200 OK` |
-| `PATCH` | `/api/v1/usuarios/{id}/senha` | JWT | Trocar senha | `204 No Content` |
-| `DELETE` | `/api/v1/usuarios/{id}` | JWT | Excluir usuário | `204 No Content` |
-| `POST` | `/api/v1/usuarios/login` | JWT | Validar credenciais (retorna dados do usuário) | `200 OK` |
 
 #### Exemplos
 
@@ -292,7 +279,7 @@ Acesse **http://localhost:8080/swagger-ui.html** com a aplicação rodando para 
 
 ![Swagger UI](docs/swagger-ui-full.png)
 
-A interface exibe os dois grupos de endpoints — **Autenticação** e **Usuários** — com descrições, schemas de request/response e a possibilidade de executar chamadas diretamente.
+A interface exibe os endpoints do grupo **Usuários** com descrições, schemas de request/response e a possibilidade de executar chamadas diretamente.
 
 ---
 
@@ -308,8 +295,8 @@ A interface exibe os dois grupos de endpoints — **Autenticação** e **Usuári
 
 | Método | Rota |
 |--------|------|
-| `POST` | `/auth/login` |
 | `POST` | `/api/v1/usuarios` |
+| `POST` | `/api/v1/usuarios/login` |
 | `GET` | `/swagger-ui/**` |
 | `GET` | `/v3/api-docs/**` |
 
@@ -385,25 +372,25 @@ Erros de validação incluem o mapa de campos inválidos:
 
 ## Testes
 
-O projeto possui **63 testes unitários**, organizados em 5 classes:
+O projeto possui **70 testes unitários**, organizados em 5 classes:
 
 | Classe | Testes | Cobertura |
 |--------|--------|-----------|
 | `UserServiceImplTest` | 20 | Toda a lógica de negócio do serviço (criação, busca, atualização, senha, login, deleção) |
 | `JwtServiceTest` | 11 | Geração de token, extração de claims, validação (expirado, inválido, login divergente) |
-| `UserControllerTest` | 21 | Todos os 7 endpoints REST — status HTTP, corpo da resposta, erros de validação |
-| `AuthControllerTest` | 5 | `POST /auth/login` — token retornado, credenciais inválidas, body inválido |
+| `JwtAuthenticationFilterTest` | 8 | Filtro JWT — token válido, inválido, ausente e rotas públicas |
+| `UserControllerTest` | 24 | Todos os endpoints REST — status HTTP, corpo da resposta, token JWT no login, erros de validação |
 | `GlobalExceptionHandlerTest` | 6 | Respostas ProblemDetail para cada tipo de exceção |
 
 **Rodar os testes unitários** (não requerem banco de dados):
 
 ```bash
-mvn test -Dtest="UserServiceImplTest,JwtServiceTest,UserControllerTest,AuthControllerTest,GlobalExceptionHandlerTest"
+mvn test -Dtest="UserServiceImplTest,JwtServiceTest,JwtAuthenticationFilterTest,UserControllerTest,GlobalExceptionHandlerTest"
 ```
 
 **Resultado esperado:**
 ```
-Tests run: 63, Failures: 0, Errors: 0, Skipped: 0
+Tests run: 70, Failures: 0, Errors: 0, Skipped: 0
 BUILD SUCCESS
 ```
 
@@ -415,7 +402,7 @@ A pasta `postman/` contém dois arquivos prontos para importar:
 
 ```
 postman/
-├── restaurant-management-api.postman_collection.json   # 25 requests com testes automáticos
+├── restaurant-management-api.postman_collection.json   # 23 requests com testes automáticos
 └── restaurant-management-api.postman_environment.json  # Variáveis de ambiente (baseUrl, token, userId)
 ```
 
@@ -427,13 +414,12 @@ postman/
 
 | Grupo | Requests | Observação |
 |-------|----------|------------|
-| 1. Autenticação (JWT) | 3 | Salva `jwtToken` automaticamente |
+| 1. Login | 4 | Salva `jwtToken` automaticamente |
 | 2. Cadastro de Usuário | 6 | Salva `userId` automaticamente |
 | 3. Busca de Usuário | 4 | Requer `userId` e `jwtToken` |
 | 4. Atualização de Dados | 3 | Requer `userId` e `jwtToken` |
 | 5. Troca de Senha | 4 | Requer `userId` e `jwtToken` |
-| 6. Validação de Login | 3 | Endpoint `/api/v1/usuarios/login` |
-| 7. Deleção de Usuário | 2 | Execute por último |
+| 6. Deleção de Usuário | 2 | Execute por último |
 
 Cada request inclui **testes automáticos** que verificam o status HTTP, a estrutura do corpo e as mensagens de erro — os resultados aparecem na aba **Test Results**.
 
