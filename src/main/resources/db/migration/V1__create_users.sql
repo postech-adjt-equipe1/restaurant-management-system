@@ -1,5 +1,3 @@
--- V1: Criação da tabela de usuários
-
 CREATE TABLE users (
     id                   BIGSERIAL PRIMARY KEY,
     nome                 VARCHAR(100)  NOT NULL,

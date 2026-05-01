@@ -16,12 +16,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * Filtro JWT que roda uma vez por requisição.
- * <p>
- * Extrai o token do header {@code Authorization: Bearer <token>},
- * valida a assinatura/expiração e injeta a autenticação no contexto do Spring Security.
- */
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -37,7 +31,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         final String authHeader = request.getHeader("Authorization");
 
-        // Prossegue sem autenticar se não houver Bearer token
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
@@ -48,11 +41,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             final String login = jwtService.extractLogin(jwt);
 
-            // Só processa se ainda não houver autenticação no contexto
             if (login != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
                 if (jwtService.isTokenValid(jwt, login)) {
-                    // Extrai o tipo de usuário do token para montar a authority
                     String userType = (String) jwtService.extractClaim(jwt,
                             claims -> claims.get("userType", String.class));
 
@@ -68,7 +59,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
         } catch (Exception ignored) {
-            // Token inválido — segue sem autenticar; o SecurityConfig recusará se necessário
         }
 
         filterChain.doFilter(request, response);

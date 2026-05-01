@@ -1,11 +1,13 @@
 package br.com.fiap.restaurante.controller;
 
+import br.com.fiap.restaurante.dto.LoginResponse;
 import br.com.fiap.restaurante.dto.UserChangePasswordRequestDTO;
 import br.com.fiap.restaurante.dto.UserCreateRequestDTO;
 import br.com.fiap.restaurante.dto.UserLoginRequestDTO;
 import br.com.fiap.restaurante.dto.UserSearchResponseDTO;
 import br.com.fiap.restaurante.dto.UserUpdateRequestDTO;
 import br.com.fiap.restaurante.dto.UserResponseDTO;
+import br.com.fiap.restaurante.security.JwtService;
 import br.com.fiap.restaurante.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/usuarios")
@@ -30,6 +33,7 @@ import java.util.List;
 public class UserController implements UserControllerDocs {
 
     private final UserService userService;
+    private final JwtService jwtService;
 
     @Override
     @PostMapping
@@ -71,9 +75,23 @@ public class UserController implements UserControllerDocs {
 
     @Override
     @PostMapping("/login")
-    public ResponseEntity<UserResponseDTO> login(@Valid @RequestBody UserLoginRequestDTO request) {
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody UserLoginRequestDTO request) {
         var user = userService.validateLogin(request.getLogin(), request.getSenha());
-        return ResponseEntity.ok(UserResponseDTO.from(user));
+
+        Map<String, Object> claims = Map.of(
+                "nome", user.getNome(),
+                "userType", user.getTipo().name()
+        );
+
+        String token = jwtService.generateToken(user.getLogin(), claims);
+
+        return ResponseEntity.ok(new LoginResponse(
+                token,
+                jwtService.getExpirationMs(),
+                user.getLogin(),
+                user.getNome(),
+                user.getTipo().name()
+        ));
     }
 
     @Override

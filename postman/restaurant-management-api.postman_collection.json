@@ -2,22 +2,15 @@
   "info": {
     "_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
     "name": "Restaurant Management API",
-    "description": "Collection completa para o sistema de gestão de restaurantes — POSTECH FIAP.\n\n**Setup:**\n1. Importe também o environment `restaurant-management-api.postman_environment.json`\n2. Configure `baseUrl` se necessário (padrão: `http://localhost:8080`)\n3. Execute primeiro **Login JWT** para gerar o token automaticamente",
+    "description": "Collection completa para o sistema de gestão de restaurantes — POSTECH FIAP.\n\n**Setup:**\n1. Importe também o environment `restaurant-management-api.postman_environment.json`\n2. Configure `baseUrl` se necessário (padrão: `http://localhost:8080`)\n3. Execute primeiro **Login - sucesso** para gerar o token JWT automaticamente",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
-  "variable": [
-    {
-      "key": "baseUrl",
-      "value": "http://localhost:8080",
-      "type": "string"
-    }
-  ],
   "item": [
     {
-      "name": "1. Autenticação (JWT)",
+      "name": "1. Login",
       "item": [
         {
-          "name": "Login JWT - sucesso",
+          "name": "Login - sucesso",
           "event": [
             {
               "listen": "test",
@@ -57,16 +50,16 @@
               "raw": "{\n  \"login\": \"joao.silva\",\n  \"senha\": \"Senha@123\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/auth/login",
+              "raw": "{{baseUrl}}/api/v1/usuarios/login",
               "host": ["{{baseUrl}}"],
-              "path": ["auth", "login"]
+              "path": ["api", "v1", "usuarios", "login"]
             },
             "description": "Autentica o usuário e retorna um token JWT Bearer.\n\n**Pré-requisito:** usuário `joao.silva` deve existir (execute 'Cadastro válido - CUSTOMER' primeiro).\n\nO token é salvo automaticamente na variável `jwtToken` para uso nas demais requisições."
           },
           "response": []
         },
         {
-          "name": "Login JWT - credenciais inválidas",
+          "name": "Login - credenciais inválidas",
           "event": [
             {
               "listen": "test",
@@ -96,16 +89,49 @@
               "raw": "{\n  \"login\": \"joao.silva\",\n  \"senha\": \"senhaErrada\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/auth/login",
+              "raw": "{{baseUrl}}/api/v1/usuarios/login",
               "host": ["{{baseUrl}}"],
-              "path": ["auth", "login"]
+              "path": ["api", "v1", "usuarios", "login"]
             },
             "description": "Tenta autenticar com senha incorreta. Espera 401 com mensagem de erro no formato ProblemDetail."
           },
           "response": []
         },
         {
-          "name": "Login JWT - body vazio (validação)",
+          "name": "Login - usuário inexistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 401 Unauthorized', () => {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"login\": \"usuario.fantasma\",\n  \"senha\": \"qualquerSenha\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/usuarios/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "usuarios", "login"]
+            },
+            "description": "Login com usuário que não existe na base. Espera 401."
+          },
+          "response": []
+        },
+        {
+          "name": "Login - body vazio (validação)",
           "event": [
             {
               "listen": "test",
@@ -135,9 +161,9 @@
               "raw": "{}"
             },
             "url": {
-              "raw": "{{baseUrl}}/auth/login",
+              "raw": "{{baseUrl}}/api/v1/usuarios/login",
               "host": ["{{baseUrl}}"],
-              "path": ["auth", "login"]
+              "path": ["api", "v1", "usuarios", "login"]
             },
             "description": "Envia body vazio — deve falhar com 400 e erros de validação nos campos obrigatórios."
           },
@@ -844,127 +870,7 @@
       ]
     },
     {
-      "name": "6. Validação de Login (endpoint legado)",
-      "item": [
-        {
-          "name": "Validação de login - sucesso",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test('Status 200 OK', () => {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test('Retorna dados do usuário autenticado', () => {",
-                  "    const body = pm.response.json();",
-                  "    pm.expect(body.login).to.eql('joao.silva');",
-                  "    pm.expect(body.nome).to.be.a('string');",
-                  "    pm.expect(body.tipo).to.be.oneOf(['CUSTOMER', 'OWNER']);",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"login\": \"joao.silva\",\n  \"senha\": \"Senha@123\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/usuarios/login",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "usuarios", "login"]
-            },
-            "description": "Endpoint de validação de credenciais que retorna os dados do usuário (sem gerar token JWT).\n\nDiferente de `/auth/login` — este retorna `UserResponseDTO` em vez de `LoginResponse`."
-          },
-          "response": []
-        },
-        {
-          "name": "Validação de login - credenciais inválidas",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test('Status 401 Unauthorized', () => {",
-                  "    pm.response.to.have.status(401);",
-                  "});",
-                  "",
-                  "pm.test('Mensagem de credenciais inválidas', () => {",
-                  "    const body = pm.response.json();",
-                  "    pm.expect(body.status).to.eql(401);",
-                  "    pm.expect(body.detail).to.include('Login ou senha inválidos');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"login\": \"joao.silva\",\n  \"senha\": \"senhaErrada\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/usuarios/login",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "usuarios", "login"]
-            },
-            "description": "Valida credenciais com senha errada. Espera 401 com mensagem 'Login ou senha inválidos'."
-          },
-          "response": []
-        },
-        {
-          "name": "Validação de login - usuário inexistente",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test('Status 401 Unauthorized', () => {",
-                  "    pm.response.to.have.status(401);",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{jwtToken}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"login\": \"usuario.fantasma\",\n  \"senha\": \"qualquerSenha\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/usuarios/login",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "usuarios", "login"]
-            },
-            "description": "Login com usuário que não existe na base. Espera 401."
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "7. Deleção de Usuário",
+      "name": "6. Deleção de Usuário",
       "item": [
         {
           "name": "Deletar usuário - sucesso",
