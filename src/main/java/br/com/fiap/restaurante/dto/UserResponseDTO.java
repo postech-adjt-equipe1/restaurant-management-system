@@ -38,15 +38,21 @@ public class UserResponseDTO {
     @Schema(description = "Endereço do usuário")
     private AddressResponseDTO endereco;
 
+    @Schema(description = "Tipo de usuário associado")
+    private TipoUsuarioResponseDTO tipoUsuario;
+
     public static UserResponseDTO from(User user) {
-        return new UserResponseDTO(
-                user.getId(),
-                user.getNome(),
-                user.getEmail(),
-                user.getLogin(),
-                user.getDataUltimaAlteracao(),
-                user.getTipo(),
-                AddressResponseDTO.from(user.getEndereco())
-        );
+        return UserResponseDTO.builder()
+                .id(user.getId())
+                .nome(user.getNome())
+                .email(user.getEmail())
+                .login(user.getLogin())
+                .dataUltimaAlteracao(user.getDataUltimaAlteracao())
+                .tipo(user.getTipo())
+                .endereco(AddressResponseDTO.from(user.getEndereco()))
+                .tipoUsuario(user.getTipoUsuario() != null
+                        ? TipoUsuarioResponseDTO.from(user.getTipoUsuario())
+                        : null)
+                .build();
     }
 }

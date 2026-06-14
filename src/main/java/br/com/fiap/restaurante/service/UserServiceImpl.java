@@ -4,8 +4,11 @@ import br.com.fiap.restaurante.exception.DuplicateEmailException;
 import br.com.fiap.restaurante.exception.DuplicateLoginException;
 import br.com.fiap.restaurante.exception.InvalidCredentialsException;
 import br.com.fiap.restaurante.exception.InvalidPasswordException;
+import br.com.fiap.restaurante.exception.TipoUsuarioNotFoundException;
 import br.com.fiap.restaurante.exception.UserNotFoundException;
+import br.com.fiap.restaurante.model.TipoUsuario;
 import br.com.fiap.restaurante.model.User;
+import br.com.fiap.restaurante.repository.TipoUsuarioRepository;
 import br.com.fiap.restaurante.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,6 +22,7 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final TipoUsuarioRepository tipoUsuarioRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -62,6 +66,7 @@ public class UserServiceImpl implements UserService {
         existente.setEmail(dadosAtualizados.getEmail());
         existente.setTipo(dadosAtualizados.getTipo());
         existente.setEndereco(dadosAtualizados.getEndereco());
+        existente.setTipoUsuario(dadosAtualizados.getTipoUsuario());
 
         return userRepository.save(existente);
     }

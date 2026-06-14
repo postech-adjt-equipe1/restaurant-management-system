@@ -1,8 +1,8 @@
-# Restaurante — Gestão de Usuários
+# Restaurante — Sistema de Gestão
 
-> **POSTECH FIAP — Arquitetura e Desenvolvimento Java — Tech Challenge Fase 1**
+> **POSTECH FIAP — Arquitetura e Desenvolvimento Java — Tech Challenge Fase 2**
 
-Backend em Spring Boot para cadastro e gerenciamento de usuários de um sistema de restaurantes, com autenticação JWT stateless.
+Backend em Spring Boot para cadastro e gerenciamento de usuários, tipos de usuário e restaurantes, com autenticação JWT stateless.
 
 ---
 
@@ -18,6 +18,7 @@ Backend em Spring Boot para cadastro e gerenciamento de usuários de um sistema 
 - [Endpoints da API](#endpoints-da-api)
   - [Autenticação](#autenticação)
   - [Usuários](#usuários)
+  - [Tipos de Usuário](#tipos-de-usuário)
 - [Swagger UI](#swagger-ui)
 - [Segurança e JWT](#segurança-e-jwt)
 - [Modelo de Dados](#modelo-de-dados)
@@ -41,7 +42,7 @@ Backend em Spring Boot para cadastro e gerenciamento de usuários de um sistema 
 | Containerização | Docker + Docker Compose |
 | Testes | JUnit 5 + Mockito + Spring MVC Test |
 
-### Tipos de Usuário
+### Tipos de Usuário (enum interno)
 
 | Tipo | Descrição |
 |------|-----------|
@@ -55,6 +56,7 @@ Backend em Spring Boot para cadastro e gerenciamento de usuários de um sistema 
 - Atualização de dados cadastrais e exclusão (CRUD completo)
 - Troca de senha com validação da senha atual
 - Login com retorno de token JWT Bearer (endpoint `/api/v1/usuarios/login`)
+- **Fase 2:** CRUD de tipos de usuário (`TipoUsuario`) com associação a usuários
 - Tratamento de erros padronizado com **ProblemDetail** (RFC 7807)
 - Documentação interativa via Swagger UI
 
@@ -81,39 +83,49 @@ Backend em Spring Boot para cadastro e gerenciamento de usuários de um sistema 
 ```
 br.com.fiap.restaurante
 ├── config/
-│   ├── SecurityConfig.java          # Regras de autorização e filtro JWT
-│   └── OpenApiConfig.java           # Configuração do Swagger
+│   ├── SecurityConfig.java               # Regras de autorização e filtro JWT
+│   └── OpenApiConfig.java                # Configuração do Swagger
 ├── controller/
-│   ├── UserController.java          # CRUD + login (com JWT) + troca de senha
-│   └── UserControllerDocs.java      # Interface com anotações Swagger
+│   ├── UserController.java               # CRUD + login (com JWT) + troca de senha
+│   ├── UserControllerDocs.java           # Interface com anotações Swagger
+│   ├── TipoUsuarioController.java        # CRUD de tipos de usuário
+│   └── TipoUsuarioControllerDocs.java    # Interface com anotações Swagger
 ├── dto/
-│   ├── LoginResponse                # Resposta do login (token JWT)
-│   ├── UserCreateRequestDTO         # Criação de usuário
-│   ├── UserUpdateRequestDTO         # Atualização de usuário
-│   ├── UserChangePasswordRequestDTO # Troca de senha
-│   ├── UserLoginRequestDTO          # Credenciais de login
-│   ├── UserResponseDTO              # Resposta completa
-│   ├── UserSearchResponseDTO        # Resposta resumida (busca)
-│   └── AddressRequest/ResponseDTO   # Endereço
+│   ├── LoginResponse                     # Resposta do login (token JWT)
+│   ├── UserCreateRequestDTO              # Criação de usuário
+│   ├── UserUpdateRequestDTO              # Atualização de usuário
+│   ├── UserChangePasswordRequestDTO      # Troca de senha
+│   ├── UserLoginRequestDTO               # Credenciais de login
+│   ├── UserResponseDTO                   # Resposta completa
+│   ├── UserSearchResponseDTO             # Resposta resumida (busca)
+│   ├── AddressRequest/ResponseDTO        # Endereço
+│   ├── TipoUsuarioRequestDTO             # Criação/atualização de tipo
+│   └── TipoUsuarioResponseDTO            # Resposta de tipo de usuário
 ├── exception/
-│   ├── GlobalExceptionHandler.java  # @ControllerAdvice → ProblemDetail
-│   ├── DuplicateEmailException      # 409 Conflict
-│   ├── DuplicateLoginException      # 409 Conflict
-│   ├── InvalidCredentialsException  # 401 Unauthorized
-│   ├── InvalidPasswordException     # 400 Bad Request
-│   └── UserNotFoundException        # 404 Not Found
+│   ├── GlobalExceptionHandler.java       # @ControllerAdvice → ProblemDetail
+│   ├── DuplicateEmailException           # 409 Conflict
+│   ├── DuplicateLoginException           # 409 Conflict
+│   ├── DuplicateTipoUsuarioException     # 409 Conflict
+│   ├── InvalidCredentialsException       # 401 Unauthorized
+│   ├── InvalidPasswordException          # 400 Bad Request
+│   ├── UserNotFoundException             # 404 Not Found
+│   └── TipoUsuarioNotFoundException      # 404 Not Found
 ├── model/
-│   ├── User.java                    # Entidade JPA
-│   ├── Address.java                 # Embeddable
-│   └── UserType.java                # Enum: OWNER | CUSTOMER
+│   ├── User.java                         # Entidade JPA (FK tipo_usuario_id)
+│   ├── Address.java                      # Embeddable
+│   ├── UserType.java                     # Enum: OWNER | CUSTOMER
+│   └── TipoUsuario.java                  # Entidade JPA
 ├── repository/
-│   └── UserRepository.java          # Spring Data JPA
+│   ├── UserRepository.java               # Spring Data JPA
+│   └── TipoUsuarioRepository.java        # Spring Data JPA
 ├── security/
-│   ├── JwtService.java              # Geração e validação de JWT
-│   └── JwtAuthenticationFilter.java # Filtro Bearer token
+│   ├── JwtService.java                   # Geração e validação de JWT
+│   └── JwtAuthenticationFilter.java      # Filtro Bearer token
 └── service/
-    ├── UserService.java             # Interface
-    └── UserServiceImpl.java         # Implementação com regras de negócio
+    ├── UserService.java                  # Interface
+    ├── UserServiceImpl.java              # Implementação com regras de negócio
+    ├── TipoUsuarioService.java           # Interface
+    └── TipoUsuarioServiceImpl.java       # Implementação com regras de negócio
 ```
 
 ### Fluxo de autenticação
@@ -213,6 +225,41 @@ Prefixo: `/api/v1/usuarios`
 | `PUT` | `/api/v1/usuarios/{id}` | JWT | Atualizar dados (sem senha) | `200 OK` |
 | `PATCH` | `/api/v1/usuarios/{id}/senha` | JWT | Trocar senha | `204 No Content` |
 | `DELETE` | `/api/v1/usuarios/{id}` | JWT | Excluir usuário | `204 No Content` |
+
+### Tipos de Usuário
+
+Prefixo: `/api/v1/tipo-usuario`
+
+| Método | Rota | Auth | Descrição | Status de sucesso |
+|--------|------|------|-----------|-------------------|
+| `POST` | `/api/v1/tipo-usuario` | JWT | Cadastrar tipo de usuário | `201 Created` |
+| `GET` | `/api/v1/tipo-usuario` | JWT | Listar todos os tipos | `200 OK` |
+| `GET` | `/api/v1/tipo-usuario/{id}` | JWT | Buscar tipo por ID | `200 OK` |
+| `PUT` | `/api/v1/tipo-usuario/{id}` | JWT | Atualizar tipo | `200 OK` |
+| `DELETE` | `/api/v1/tipo-usuario/{id}` | JWT | Excluir tipo | `204 No Content` |
+
+**Cadastro** `POST /api/v1/tipo-usuario`
+```json
+{ "nome": "Dono de Restaurante" }
+```
+
+**Response `201 Created`:**
+```json
+{ "id": 1, "nome": "Dono de Restaurante" }
+```
+
+**Associar tipo ao usuário** — envie `tipoUsuarioId` ao criar ou atualizar um usuário:
+```json
+{
+  "nome": "João Silva",
+  "email": "joao@email.com",
+  "login": "joao.silva",
+  "senha": "Senha@123",
+  "tipo": "OWNER",
+  "tipoUsuarioId": 1,
+  "endereco": { ... }
+}
+```
 
 **Login** `POST /api/v1/usuarios/login`
 ```json
@@ -314,8 +361,16 @@ A interface exibe os endpoints do grupo **Usuários** com descrições, schemas 
 | `login` | String | Obrigatório, único, 3–50 chars |
 | `senha` | String | Obrigatório, mín. 8 chars, armazenada com BCrypt |
 | `tipo` | `OWNER` \| `CUSTOMER` | Obrigatório |
+| `tipoUsuario` | TipoUsuario | Opcional, FK para `tipo_usuario` |
 | `dataUltimaAlteracao` | LocalDateTime | Atualizado automaticamente (`@PrePersist`, `@PreUpdate`) |
 | `endereco` | Address | Obrigatório (embedded) |
+
+### TipoUsuario
+
+| Campo | Tipo | Regras |
+|-------|------|--------|
+| `id` | Long | PK, auto-gerado |
+| `nome` | String | Obrigatório, único, máx. 100 chars |
 
 ### Address (embedded)
 
@@ -365,14 +420,16 @@ Erros de validação incluem o mapa de campos inválidos:
 | Senha atual incorreta | `400 Bad Request` |
 | Credenciais inválidas | `401 Unauthorized` |
 | Usuário não encontrado | `404 Not Found` |
+| Tipo de usuário não encontrado | `404 Not Found` |
 | E-mail ou login duplicado | `409 Conflict` |
+| Nome de tipo de usuário duplicado | `409 Conflict` |
 | Erro interno | `500 Internal Server Error` |
 
 ---
 
 ## Testes
 
-O projeto possui **70 testes unitários**, organizados em 5 classes:
+O projeto possui **93 testes unitários**, organizados em 7 classes:
 
 | Classe | Testes | Cobertura |
 |--------|--------|-----------|
@@ -381,16 +438,18 @@ O projeto possui **70 testes unitários**, organizados em 5 classes:
 | `JwtAuthenticationFilterTest` | 8 | Filtro JWT — token válido, inválido, ausente e rotas públicas |
 | `UserControllerTest` | 24 | Todos os endpoints REST — status HTTP, corpo da resposta, token JWT no login, erros de validação |
 | `GlobalExceptionHandlerTest` | 6 | Respostas ProblemDetail para cada tipo de exceção |
+| `TipoUsuarioServiceImplTest` | 12 | CRUD do serviço — criação, busca, atualização, deleção e validação de nome duplicado |
+| `TipoUsuarioControllerTest` | 12 | Todos os endpoints REST de tipo de usuário — status HTTP, corpo da resposta e erros |
 
 **Rodar os testes unitários** (não requerem banco de dados):
 
 ```bash
-mvn test -Dtest="UserServiceImplTest,JwtServiceTest,JwtAuthenticationFilterTest,UserControllerTest,GlobalExceptionHandlerTest"
+mvn test -Dtest="UserServiceImplTest,JwtServiceTest,JwtAuthenticationFilterTest,UserControllerTest,GlobalExceptionHandlerTest,TipoUsuarioServiceImplTest,TipoUsuarioControllerTest"
 ```
 
 **Resultado esperado:**
 ```
-Tests run: 70, Failures: 0, Errors: 0, Skipped: 0
+Tests run: 93, Failures: 0, Errors: 0, Skipped: 0
 BUILD SUCCESS
 ```
 

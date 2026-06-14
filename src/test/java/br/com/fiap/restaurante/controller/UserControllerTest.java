@@ -14,6 +14,7 @@ import br.com.fiap.restaurante.model.Address;
 import br.com.fiap.restaurante.model.User;
 import br.com.fiap.restaurante.model.UserType;
 import br.com.fiap.restaurante.security.JwtService;
+import br.com.fiap.restaurante.service.TipoUsuarioService;
 import br.com.fiap.restaurante.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,6 +61,9 @@ class UserControllerTest {
 
     @MockBean
     private JwtService jwtService;
+
+    @MockBean
+    private TipoUsuarioService tipoUsuarioService;
 
     private User user;
     private AddressRequestDTO addressDTO;

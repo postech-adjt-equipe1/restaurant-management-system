@@ -8,6 +8,7 @@ import br.com.fiap.restaurante.exception.UserNotFoundException;
 import br.com.fiap.restaurante.model.Address;
 import br.com.fiap.restaurante.model.User;
 import br.com.fiap.restaurante.model.UserType;
+import br.com.fiap.restaurante.repository.TipoUsuarioRepository;
 import br.com.fiap.restaurante.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,9 @@ class UserServiceImplTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private TipoUsuarioRepository tipoUsuarioRepository;
 
     @Mock
     private PasswordEncoder passwordEncoder;

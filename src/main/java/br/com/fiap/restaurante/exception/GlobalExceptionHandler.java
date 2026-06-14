@@ -76,7 +76,13 @@ public class GlobalExceptionHandler {
                 .body(problem(HttpStatus.NOT_FOUND, ex.getMessage()));
     }
 
-    @ExceptionHandler({DuplicateEmailException.class, DuplicateLoginException.class})
+    @ExceptionHandler(TipoUsuarioNotFoundException.class)
+    public ResponseEntity<ProblemDetail> handleTipoUsuarioNotFound(TipoUsuarioNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(problem(HttpStatus.NOT_FOUND, ex.getMessage()));
+    }
+
+    @ExceptionHandler({DuplicateEmailException.class, DuplicateLoginException.class, DuplicateTipoUsuarioException.class})
     public ResponseEntity<ProblemDetail> handleDuplicate(RuntimeException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(problem(HttpStatus.CONFLICT, ex.getMessage()));

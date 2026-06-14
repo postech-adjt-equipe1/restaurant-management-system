@@ -7,7 +7,9 @@ import br.com.fiap.restaurante.dto.UserLoginRequestDTO;
 import br.com.fiap.restaurante.dto.UserSearchResponseDTO;
 import br.com.fiap.restaurante.dto.UserUpdateRequestDTO;
 import br.com.fiap.restaurante.dto.UserResponseDTO;
+import br.com.fiap.restaurante.model.User;
 import br.com.fiap.restaurante.security.JwtService;
+import br.com.fiap.restaurante.service.TipoUsuarioService;
 import br.com.fiap.restaurante.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -34,12 +36,16 @@ public class UserController implements UserControllerDocs {
 
     private final UserService userService;
     private final JwtService jwtService;
+    private final TipoUsuarioService tipoUsuarioService;
 
     @Override
     @PostMapping
     public ResponseEntity<UserResponseDTO> create(@Valid @RequestBody UserCreateRequestDTO request) {
-        var user = userService.create(request.toUser());
-        return ResponseEntity.status(HttpStatus.CREATED).body(UserResponseDTO.from(user));
+        User user = request.toUser();
+        if (request.getTipoUsuarioId() != null) {
+            user.setTipoUsuario(tipoUsuarioService.findById(request.getTipoUsuarioId()));
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(UserResponseDTO.from(userService.create(user)));
     }
 
     @Override
@@ -62,8 +68,11 @@ public class UserController implements UserControllerDocs {
     @PutMapping("/{id}")
     public ResponseEntity<UserResponseDTO> update(@PathVariable Long id,
                                                   @Valid @RequestBody UserUpdateRequestDTO request) {
-        var user = userService.update(id, request.toUser());
-        return ResponseEntity.ok(UserResponseDTO.from(user));
+        User dadosAtualizados = request.toUser();
+        if (request.getTipoUsuarioId() != null) {
+            dadosAtualizados.setTipoUsuario(tipoUsuarioService.findById(request.getTipoUsuarioId()));
+        }
+        return ResponseEntity.ok(UserResponseDTO.from(userService.update(id, dadosAtualizados)));
     }
 
     @Override

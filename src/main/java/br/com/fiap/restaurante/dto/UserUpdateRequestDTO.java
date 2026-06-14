@@ -41,6 +41,9 @@ public class UserUpdateRequestDTO {
     @Valid
     private AddressRequestDTO endereco;
 
+    @Schema(description = "ID do tipo de usuário (opcional)", example = "1")
+    private Long tipoUsuarioId;
+
     public User toUser() {
         return User.builder()
                 .nome(nome)

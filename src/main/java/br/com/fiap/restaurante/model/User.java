@@ -54,6 +54,10 @@ public class User {
     @Embedded
     private Address endereco;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tipo_usuario_id")
+    private TipoUsuario tipoUsuario;
+
     @PrePersist
     public void prePersist() {
         dataUltimaAlteracao = LocalDateTime.now();

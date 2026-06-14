@@ -9,6 +9,18 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-06-08
+
+### Adicionado
+- Entidade `TipoUsuario` com campo `nome` e tabela `tipo_usuario` (migration V2)
+- CRUD completo de tipos de usuário: `POST /api/v1/tipo-usuario`, `GET /api/v1/tipo-usuario`, `GET /api/v1/tipo-usuario/{id}`, `PUT /api/v1/tipo-usuario/{id}`, `DELETE /api/v1/tipo-usuario/{id}`
+- Associação `ManyToOne` entre `User` e `TipoUsuario` via coluna `tipo_usuario_id` (migration V3)
+- Campo opcional `tipoUsuarioId` em `UserCreateRequestDTO` e `UserUpdateRequestDTO`
+- `TipoUsuarioResponseDTO` aninhado na resposta de `UserResponseDTO`
+- Exceções `TipoUsuarioNotFoundException` (404) e `DuplicateTipoUsuarioException` (409)
+- Dados iniciais: tipos "Dono de Restaurante" e "Cliente" inseridos via migration V2
+- 21 novos testes unitários: `TipoUsuarioServiceImplTest` (12) e `TipoUsuarioControllerTest` (9)
+
 ## [0.2.0] - 2026-04-07
 
 ### Adicionado
@@ -44,6 +56,7 @@ e este projeto adota [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - `.gitignore` para Maven, IDEs e variáveis de ambiente
 - `README.md` com visão geral, arquitetura, pré-requisitos e endpoints
 
-[Unreleased]: https://github.com/caioc/tech_challenge_fase_01/compare/v0.2.0...HEAD
-[0.2.0]: https://github.com/caioc/tech_challenge_fase_01/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/caioc/tech_challenge_fase_01/releases/tag/v0.1.0
+[Unreleased]: https://github.com/postech-adjt-equipe1/restaurant-management-system/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/postech-adjt-equipe1/restaurant-management-system/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/postech-adjt-equipe1/restaurant-management-system/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/postech-adjt-equipe1/restaurant-management-system/releases/tag/v0.1.0
