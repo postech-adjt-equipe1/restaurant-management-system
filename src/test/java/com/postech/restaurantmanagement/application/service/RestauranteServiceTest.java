@@ -5,6 +5,7 @@ import com.postech.restaurantmanagement.application.dto.RestauranteResponse;
 import com.postech.restaurantmanagement.domain.model.Restaurante;
 import com.postech.restaurantmanagement.domain.model.TipoUsuario;
 import com.postech.restaurantmanagement.domain.model.Usuario;
+import com.postech.restaurantmanagement.domain.repository.ItemCardapioRepository;
 import com.postech.restaurantmanagement.domain.repository.RestauranteRepository;
 import com.postech.restaurantmanagement.domain.repository.TipoUsuarioRepository;
 import com.postech.restaurantmanagement.domain.repository.UsuarioRepository;
@@ -35,6 +36,9 @@ class RestauranteServiceTest {
 
     @Mock
     private TipoUsuarioRepository tipoUsuarioRepository;
+
+    @Mock
+    private ItemCardapioRepository itemCardapioRepository;
 
     @InjectMocks
     private RestauranteService restauranteService;
@@ -201,6 +205,7 @@ class RestauranteServiceTest {
     @Test
     void deletar_deveDeletarComSucesso() {
         when(restauranteRepository.existsById(1L)).thenReturn(true);
+        when(itemCardapioRepository.existsByRestauranteId(1L)).thenReturn(false);
         doNothing().when(restauranteRepository).deleteById(1L);
 
         restauranteService.deletar(1L);
@@ -215,6 +220,18 @@ class RestauranteServiceTest {
         assertThatThrownBy(() -> restauranteService.deletar(99L))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("99");
+
+        verify(restauranteRepository, never()).deleteById(any());
+    }
+
+    @Test
+    void deletar_deveLancarExcecaoQuandoRestaurantePossuiItensDeCardapio() {
+        when(restauranteRepository.existsById(1L)).thenReturn(true);
+        when(itemCardapioRepository.existsByRestauranteId(1L)).thenReturn(true);
+
+        assertThatThrownBy(() -> restauranteService.deletar(1L))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("possui itens de cardápio");
 
         verify(restauranteRepository, never()).deleteById(any());
     }

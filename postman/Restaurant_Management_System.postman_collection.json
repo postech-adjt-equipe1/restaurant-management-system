@@ -1,0 +1,624 @@
+{
+  "info": {
+    "_postman_id": "restaurant-management-system",
+    "name": "Restaurant Management System - Fase 2",
+    "description": "Collection para testar todos os endpoints da API do Sistema de Gestão de Restaurantes — Tech Challenge Fase 2 (FIAP POS TECH).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Tipo de Usuário",
+      "item": [
+        {
+          "name": "Criar Tipo de Usuário - Dono de Restaurante",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Dono de Restaurante\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/tipo-usuario",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tipo-usuario"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Criar Tipo de Usuário - Cliente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Cliente\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/tipo-usuario",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tipo-usuario"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Listar Todos os Tipos de Usuário",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/tipo-usuario",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tipo-usuario"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Buscar Tipo de Usuário por ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/tipo-usuario/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tipo-usuario",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Atualizar Tipo de Usuário",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Dono de Restaurante Atualizado\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/tipo-usuario/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tipo-usuario",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Deletar Tipo de Usuário",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/tipo-usuario/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tipo-usuario",
+                "2"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Usuário",
+      "item": [
+        {
+          "name": "Criar Usuário - Dono",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"João Silva\",\n  \"email\": \"joao@email.com\",\n  \"senha\": \"senha123\",\n  \"tipoUsuarioId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/usuario",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuario"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Criar Usuário - Cliente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Maria Santos\",\n  \"email\": \"maria@email.com\",\n  \"senha\": \"senha456\",\n  \"tipoUsuarioId\": 2\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/usuario",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuario"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Listar Todos os Usuários",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/usuario",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuario"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Buscar Usuário por ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/usuario/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuario",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Atualizar Usuário",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"João Silva Atualizado\",\n  \"email\": \"joao.novo@email.com\",\n  \"senha\": \"novaSenha123\",\n  \"tipoUsuarioId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/usuario/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuario",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Deletar Usuário",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/usuario/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuario",
+                "2"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Restaurante",
+      "item": [
+        {
+          "name": "Criar Restaurante",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Sabor Caseiro\",\n  \"endereco\": \"Rua das Flores, 123\",\n  \"tipoCozinha\": \"Brasileira\",\n  \"horarioFuncionamento\": \"08:00-22:00\",\n  \"donoId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/restaurante",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "restaurante"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Listar Todos os Restaurantes",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/restaurante",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "restaurante"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Buscar Restaurante por ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/restaurante/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "restaurante",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Atualizar Restaurante",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Sabor Caseiro Renovado\",\n  \"endereco\": \"Rua Nova, 789\",\n  \"tipoCozinha\": \"Fusion\",\n  \"horarioFuncionamento\": \"10:00-00:00\",\n  \"donoId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/restaurante/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "restaurante",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Deletar Restaurante",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/restaurante/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "restaurante",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "[ERRO] Deletar Restaurante com Cardápio",
+          "request": {
+            "description": "Retorna 409 Conflict: um restaurante que ainda possui itens de cardápio não pode ser removido.",
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/restaurante/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "restaurante",
+                "1"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cardápio",
+      "item": [
+        {
+          "name": "Criar Item no Cardápio",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Feijoada Completa\",\n  \"descricao\": \"Feijoada com arroz, couve, farofa e laranja\",\n  \"preco\": 45.90,\n  \"apenasLocal\": false,\n  \"caminhoFoto\": \"/fotos/feijoada.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/restaurante/1/cardapio",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "restaurante",
+                "1",
+                "cardapio"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Criar Item - Apenas Local",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Picanha Grelhada\",\n  \"descricao\": \"Picanha na brasa com arroz, feijão tropeiro e vinagrete\",\n  \"preco\": 79.90,\n  \"apenasLocal\": true,\n  \"caminhoFoto\": \"/fotos/picanha.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/restaurante/1/cardapio",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "restaurante",
+                "1",
+                "cardapio"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Criar Item - Sem Foto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Suco Natural\",\n  \"descricao\": \"Suco de laranja natural 500ml\",\n  \"preco\": 12.00,\n  \"apenasLocal\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/restaurante/1/cardapio",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "restaurante",
+                "1",
+                "cardapio"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Listar Cardápio do Restaurante",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/restaurante/1/cardapio",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "restaurante",
+                "1",
+                "cardapio"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Buscar Item do Cardápio por ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/cardapio/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cardapio",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Atualizar Item do Cardápio",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Feijoada Premium\",\n  \"descricao\": \"Feijoada com cortes nobres, arroz, couve, farofa e laranja\",\n  \"preco\": 69.90,\n  \"apenasLocal\": true,\n  \"caminhoFoto\": \"/fotos/feijoada-premium.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/cardapio/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cardapio",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Deletar Item do Cardápio",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/cardapio/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cardapio",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "[ERRO] Criar Item - Restaurante Inexistente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Item Teste\",\n  \"descricao\": \"Descrição teste\",\n  \"preco\": 10.00,\n  \"apenasLocal\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/restaurante/999/cardapio",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "restaurante",
+                "999",
+                "cardapio"
+              ]
+            }
+          }
+        },
+        {
+          "name": "[ERRO] Criar Item - Campos Ausentes",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/restaurante/1/cardapio",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "restaurante",
+                "1",
+                "cardapio"
+              ]
+            }
+          }
+        },
+        {
+          "name": "[ERRO] Buscar Item Inexistente",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/cardapio/999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cardapio",
+                "999"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
