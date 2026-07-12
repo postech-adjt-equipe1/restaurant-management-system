@@ -33,12 +33,12 @@ Essa separação garante que a lógica de negócio (domínio) não dependa de fr
 
 ## Pré-requisitos
 
-| Ferramenta | Versão mínima |
-|------------|---------------|
-| Java       | 17            |
-| Maven      | 3.9           |
-| Docker     | 24            |
-| Docker Compose | 2.x       |
+| Ferramenta     | Versão mínima |
+| -------------- | ------------- |
+| Java           | 17            |
+| Maven          | 3.9           |
+| Docker         | 24            |
+| Docker Compose | 2.x           |
 
 ---
 
@@ -52,13 +52,13 @@ cp .env.example .env
 
 Variáveis disponíveis:
 
-| Variável      | Padrão          | Descrição                    |
-|---------------|-----------------|------------------------------|
-| `DB_NAME`     | `restaurant_db` | Nome do banco de dados       |
-| `DB_USER`     | `postgres`      | Usuário do PostgreSQL        |
-| `DB_PASSWORD` | `postgres`      | Senha do PostgreSQL          |
-| `DB_PORT`     | `5432`          | Porta exposta do PostgreSQL  |
-| `SERVER_PORT` | `8080`          | Porta exposta da aplicação   |
+| Variável      | Padrão          | Descrição                   |
+| ------------- | --------------- | --------------------------- |
+| `DB_NAME`     | `restaurant_db` | Nome do banco de dados      |
+| `DB_USER`     | `postgres`      | Usuário do PostgreSQL       |
+| `DB_PASSWORD` | `postgres`      | Senha do PostgreSQL         |
+| `DB_PORT`     | `5432`          | Porta exposta do PostgreSQL |
+| `SERVER_PORT` | `8080`          | Porta exposta da aplicação  |
 
 ---
 
@@ -67,7 +67,7 @@ Variáveis disponíveis:
 ### Com Docker Compose (recomendado)
 
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
 A aplicação estará disponível em `http://localhost:8080`.
@@ -86,10 +86,10 @@ Certifique-se de que as variáveis de ambiente `DB_HOST`, `DB_NAME`, `DB_USER` e
 
 Com a aplicação em execução, a documentação interativa de todos os endpoints fica disponível em:
 
-| Recurso           | URL                                              |
-|-------------------|---------------------------------------------------|
-| Swagger UI        | http://localhost:8080/swagger-ui.html            |
-| OpenAPI JSON      | http://localhost:8080/v3/api-docs                |
+| Recurso      | URL                                   |
+| ------------ | ------------------------------------- |
+| Swagger UI   | http://localhost:8080/swagger-ui.html |
+| OpenAPI JSON | http://localhost:8080/v3/api-docs     |
 
 A configuração do Swagger fica isolada em [`infrastructure/config/OpenApiConfig.java`](src/main/java/com/postech/restaurantmanagement/infrastructure/config/OpenApiConfig.java) e em anotações (`@Tag`, `@Operation`, `@ApiResponse`) nos controllers da camada `presentation`. Nenhuma anotação de documentação é usada em `domain` ou `application`, para manter o núcleo de negócio livre de dependências de framework.
 
@@ -101,15 +101,16 @@ A configuração do Swagger fica isolada em [`infrastructure/config/OpenApiConfi
 
 ### Tipo de Usuário
 
-| Método   | URL                    | Descrição                    |
-|----------|------------------------|------------------------------|
-| `POST`   | `/tipo-usuario`        | Cria um novo tipo de usuário |
-| `GET`    | `/tipo-usuario`        | Lista todos os tipos         |
-| `GET`    | `/tipo-usuario/{id}`   | Busca tipo pelo ID           |
-| `PUT`    | `/tipo-usuario/{id}`   | Atualiza tipo pelo ID        |
-| `DELETE` | `/tipo-usuario/{id}`   | Remove tipo pelo ID          |
+| Método   | URL                  | Descrição                    |
+| -------- | -------------------- | ---------------------------- |
+| `POST`   | `/tipo-usuario`      | Cria um novo tipo de usuário |
+| `GET`    | `/tipo-usuario`      | Lista todos os tipos         |
+| `GET`    | `/tipo-usuario/{id}` | Busca tipo pelo ID           |
+| `PUT`    | `/tipo-usuario/{id}` | Atualiza tipo pelo ID        |
+| `DELETE` | `/tipo-usuario/{id}` | Remove tipo pelo ID          |
 
 **Body — POST / PUT:**
+
 ```json
 {
   "nome": "Dono de Restaurante"
@@ -117,6 +118,7 @@ A configuração do Swagger fica isolada em [`infrastructure/config/OpenApiConfi
 ```
 
 **Resposta de sucesso (201 / 200):**
+
 ```json
 {
   "id": 1,
@@ -128,15 +130,16 @@ A configuração do Swagger fica isolada em [`infrastructure/config/OpenApiConfi
 
 ### Usuário
 
-| Método   | URL               | Descrição                 |
-|----------|-------------------|---------------------------|
-| `POST`   | `/usuario`        | Cria um novo usuário      |
-| `GET`    | `/usuario`        | Lista todos os usuários   |
-| `GET`    | `/usuario/{id}`   | Busca usuário pelo ID     |
-| `PUT`    | `/usuario/{id}`   | Atualiza usuário pelo ID  |
-| `DELETE` | `/usuario/{id}`   | Remove usuário pelo ID    |
+| Método   | URL             | Descrição                |
+| -------- | --------------- | ------------------------ |
+| `POST`   | `/usuario`      | Cria um novo usuário     |
+| `GET`    | `/usuario`      | Lista todos os usuários  |
+| `GET`    | `/usuario/{id}` | Busca usuário pelo ID    |
+| `PUT`    | `/usuario/{id}` | Atualiza usuário pelo ID |
+| `DELETE` | `/usuario/{id}` | Remove usuário pelo ID   |
 
 **Body — POST / PUT:**
+
 ```json
 {
   "nome": "João Silva",
@@ -147,6 +150,7 @@ A configuração do Swagger fica isolada em [`infrastructure/config/OpenApiConfi
 ```
 
 **Resposta de sucesso (201 / 200):**
+
 ```json
 {
   "id": 1,
@@ -160,15 +164,16 @@ A configuração do Swagger fica isolada em [`infrastructure/config/OpenApiConfi
 
 ### Restaurante
 
-| Método   | URL                    | Descrição                          |
-|----------|------------------------|-------------------------------------|
-| `POST`   | `/restaurante`         | Cria um novo restaurante            |
-| `GET`    | `/restaurante`         | Lista todos os restaurantes         |
-| `GET`    | `/restaurante/{id}`    | Busca restaurante pelo ID           |
-| `PUT`    | `/restaurante/{id}`    | Atualiza restaurante pelo ID        |
-| `DELETE` | `/restaurante/{id}`    | Remove restaurante pelo ID          |
+| Método   | URL                 | Descrição                    |
+| -------- | ------------------- | ---------------------------- |
+| `POST`   | `/restaurante`      | Cria um novo restaurante     |
+| `GET`    | `/restaurante`      | Lista todos os restaurantes  |
+| `GET`    | `/restaurante/{id}` | Busca restaurante pelo ID    |
+| `PUT`    | `/restaurante/{id}` | Atualiza restaurante pelo ID |
+| `DELETE` | `/restaurante/{id}` | Remove restaurante pelo ID   |
 
 **Body — POST / PUT:**
+
 ```json
 {
   "nome": "Cantina da Nonna",
@@ -180,6 +185,7 @@ A configuração do Swagger fica isolada em [`infrastructure/config/OpenApiConfi
 ```
 
 **Resposta de sucesso (201 / 200):**
+
 ```json
 {
   "id": 1,
@@ -192,6 +198,7 @@ A configuração do Swagger fica isolada em [`infrastructure/config/OpenApiConfi
 ```
 
 **Regras de negócio:**
+
 - O `donoId` deve ser um usuário existente cujo tipo de usuário seja **"Dono de Restaurante"**; caso contrário a API responde `404`.
 - Um restaurante que ainda possui itens de cardápio não pode ser removido — a API responde `409 Conflict`. Remova os itens primeiro.
 
@@ -199,32 +206,34 @@ A configuração do Swagger fica isolada em [`infrastructure/config/OpenApiConfi
 
 ### Cardápio
 
-| Método   | URL                                     | Descrição                                    |
-|----------|-----------------------------------------|-----------------------------------------------|
-| `POST`   | `/restaurante/{restauranteId}/cardapio` | Cria um item de cardápio para o restaurante  |
-| `GET`    | `/restaurante/{restauranteId}/cardapio` | Lista os itens de cardápio do restaurante    |
-| `GET`    | `/cardapio/{itemId}`                    | Busca um item de cardápio pelo ID            |
-| `PUT`    | `/cardapio/{itemId}`                    | Atualiza um item de cardápio pelo ID         |
-| `DELETE` | `/cardapio/{itemId}`                    | Remove um item de cardápio pelo ID           |
+| Método   | URL                                     | Descrição                                   |
+| -------- | --------------------------------------- | ------------------------------------------- |
+| `POST`   | `/restaurante/{restauranteId}/cardapio` | Cria um item de cardápio para o restaurante |
+| `GET`    | `/restaurante/{restauranteId}/cardapio` | Lista os itens de cardápio do restaurante   |
+| `GET`    | `/cardapio/{itemId}`                    | Busca um item de cardápio pelo ID           |
+| `PUT`    | `/cardapio/{itemId}`                    | Atualiza um item de cardápio pelo ID        |
+| `DELETE` | `/cardapio/{itemId}`                    | Remove um item de cardápio pelo ID          |
 
 **Body — POST / PUT:**
+
 ```json
 {
   "nome": "Feijoada Completa",
   "descricao": "Feijoada com arroz, couve e farofa",
-  "preco": 45.90,
+  "preco": 45.9,
   "apenasLocal": false,
   "caminhoFoto": "/fotos/feijoada.jpg"
 }
 ```
 
 **Resposta de sucesso (201 / 200):**
+
 ```json
 {
   "id": 1,
   "nome": "Feijoada Completa",
   "descricao": "Feijoada com arroz, couve e farofa",
-  "preco": 45.90,
+  "preco": 45.9,
   "apenasLocal": false,
   "caminhoFoto": "/fotos/feijoada.jpg",
   "restauranteId": 1
@@ -237,11 +246,11 @@ A configuração do Swagger fica isolada em [`infrastructure/config/OpenApiConfi
 
 ### Erros comuns (todos os módulos)
 
-| Status | Situação                                                     |
-|--------|---------------------------------------------------------------|
-| `400`  | Campo obrigatório ausente ou formato inválido (corpo da requisição) |
+| Status | Situação                                                                                                            |
+| ------ | ------------------------------------------------------------------------------------------------------------------- |
+| `400`  | Campo obrigatório ausente ou formato inválido (corpo da requisição)                                                 |
 | `404`  | Recurso não encontrado pelo ID informado (ou referência a um recurso pai inexistente, ex.: restaurante do cardápio) |
-| `409`  | Conflito de estado — ex.: tentar remover um restaurante que ainda possui itens de cardápio |
+| `409`  | Conflito de estado — ex.: tentar remover um restaurante que ainda possui itens de cardápio                          |
 
 ---
 
@@ -310,9 +319,9 @@ restaurant-management-system/
 
 ## Membros do Time
 
-| Pessoa  | Responsabilidade                                                                 |
-|---------|----------------------------------------------------------------------------------|
-| Caio    | TipoUsuario CRUD + Docker Compose + Testes unitários                             |
-| Igor    | Restaurante CRUD + Testes unitários + Testes de integração                       |
+| Pessoa  | Responsabilidade                                                                        |
+| ------- | --------------------------------------------------------------------------------------- |
+| Caio    | TipoUsuario CRUD + Docker Compose + Testes unitários                                    |
+| Igor    | Restaurante CRUD + Testes unitários + Testes de integração                              |
 | Armando | Cardápio CRUD + Clean Architecture + Testes unitários + Documentação (README + Postman) |
-| Luciano | QA geral + Testes de integração do Cardápio + Code review + Vídeo de Apresentação |
+| Luciano | QA geral + Testes de integração do Cardápio + Code review + Vídeo de Apresentação       |
